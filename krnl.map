@@ -1,4 +1,4 @@
-Archive member included to satisfy reference by file (symbol)
+由于文件 (符号) 而包含了归档成员
 
 lib/orangescrt.a(printf.o)    kernel/main.o (printf)
 lib/orangescrt.a(vsprintf.o)  kernel/main.o (vsprintf)
@@ -15,8 +15,8 @@ lib/orangescrt.a(wait.o)      kernel/main.o (wait)
 lib/orangescrt.a(exec.o)      kernel/main.o (execv)
 lib/orangescrt.a(syscall.o)   lib/orangescrt.a(misc.o) (sendrec)
 
-Allocating common symbols
-Common symbol       size              file
+分配公共符号
+公共符号            大小              文件
 
 idt_ptr             0x6               kernel/global.o
 inode_table         0xb00             kernel/global.o
@@ -44,7 +44,7 @@ irq_table           0x40              kernel/global.o
 p_proc_ready        0x4               kernel/global.o
 proc_table          0x3af8            kernel/global.o
 
-Discarded input sections
+舍弃的输入节
 
  .note.GNU-stack
                 0x0000000000000000        0x0 kernel/start.o
@@ -117,14 +117,14 @@ Discarded input sections
  .note.GNU-stack
                 0x0000000000000000        0x0 lib/orangescrt.a(exec.o)
 
-Memory Configuration
+内存配置
 
-Name             Origin             Length             Attributes
+名称           来源             长度             属性
 *default*        0x0000000000000000 0xffffffffffffffff
 
-Linker script and memory map
+链结器命令稿和内存映射
 
-Address of section .text set to 0x1000
+段 .text 的地址设置为 0x1000
 LOAD kernel/kernel.o
 LOAD kernel/start.o
 LOAD kernel/main.o
@@ -474,71 +474,71 @@ LOAD lib/orangescrt.a
  *(.eh_frame)
  .eh_frame      0x000000000000f0ec       0x38 kernel/start.o
  .eh_frame      0x000000000000f124      0x108 kernel/main.o
-                                        0x120 (size before relaxing)
+                                        0x120 (松开之前的大小)
  .eh_frame      0x000000000000f22c       0x60 kernel/clock.o
-                                         0x78 (size before relaxing)
+                                         0x78 (松开之前的大小)
  .eh_frame      0x000000000000f28c       0xe0 kernel/keyboard.o
-                                         0xf8 (size before relaxing)
+                                         0xf8 (松开之前的大小)
  .eh_frame      0x000000000000f36c      0x13c kernel/tty.o
-                                        0x154 (size before relaxing)
+                                        0x154 (松开之前的大小)
  .eh_frame      0x000000000000f4a8      0x144 kernel/console.o
-                                        0x15c (size before relaxing)
+                                        0x15c (松开之前的大小)
  .eh_frame      0x000000000000f5ec       0x60 kernel/i8259.o
-                                         0x78 (size before relaxing)
+                                         0x78 (松开之前的大小)
  .eh_frame      0x000000000000f64c       0xb0 kernel/protect.o
-                                         0xc8 (size before relaxing)
+                                         0xc8 (松开之前的大小)
  .eh_frame      0x000000000000f6fc      0x1b8 kernel/proc.o
-                                        0x1d0 (size before relaxing)
+                                        0x1d0 (松开之前的大小)
  .eh_frame      0x000000000000f8b4       0x5c kernel/systask.o
-                                         0x74 (size before relaxing)
+                                         0x74 (松开之前的大小)
  .eh_frame      0x000000000000f910      0x1f0 kernel/hd.o
-                                        0x208 (size before relaxing)
+                                        0x208 (松开之前的大小)
  .eh_frame      0x000000000000fb00       0xa0 kernel/klib.o
-                                         0xb8 (size before relaxing)
+                                         0xb8 (松开之前的大小)
  .eh_frame      0x000000000000fba0       0x20 lib/syslog.o
-                                         0x38 (size before relaxing)
+                                         0x38 (松开之前的大小)
  .eh_frame      0x000000000000fbc0       0x7c mm/main.o
-                                         0x94 (size before relaxing)
+                                         0x94 (松开之前的大小)
  .eh_frame      0x000000000000fc3c       0x90 mm/forkexit.o
-                                         0xa8 (size before relaxing)
+                                         0xa8 (松开之前的大小)
  .eh_frame      0x000000000000fccc       0x2c mm/exec.o
-                                         0x44 (size before relaxing)
+                                         0x44 (松开之前的大小)
  .eh_frame      0x000000000000fcf8      0x170 fs/main.o
-                                        0x188 (size before relaxing)
+                                        0x188 (松开之前的大小)
  .eh_frame      0x000000000000fe68      0x120 fs/open.o
-                                        0x138 (size before relaxing)
+                                        0x138 (松开之前的大小)
  .eh_frame      0x000000000000ff88       0x68 fs/misc.o
-                                         0x80 (size before relaxing)
+                                         0x80 (松开之前的大小)
  .eh_frame      0x000000000000fff0       0x2c fs/read_write.o
-                                         0x44 (size before relaxing)
+                                         0x44 (松开之前的大小)
  .eh_frame      0x000000000001001c       0x2c fs/link.o
-                                         0x44 (size before relaxing)
+                                         0x44 (松开之前的大小)
  .eh_frame      0x0000000000010048       0x60 fs/disklog.o
-                                         0x78 (size before relaxing)
+                                         0x78 (松开之前的大小)
  .eh_frame      0x00000000000100a8       0x40 lib/orangescrt.a(printf.o)
-                                         0x58 (size before relaxing)
+                                         0x58 (松开之前的大小)
  .eh_frame      0x00000000000100e8       0x60 lib/orangescrt.a(vsprintf.o)
-                                         0x78 (size before relaxing)
+                                         0x78 (松开之前的大小)
  .eh_frame      0x0000000000010148       0xbc lib/orangescrt.a(misc.o)
-                                         0xd4 (size before relaxing)
+                                         0xd4 (松开之前的大小)
  .eh_frame      0x0000000000010204       0x20 lib/orangescrt.a(open.o)
-                                         0x38 (size before relaxing)
+                                         0x38 (松开之前的大小)
  .eh_frame      0x0000000000010224       0x20 lib/orangescrt.a(read.o)
-                                         0x38 (size before relaxing)
+                                         0x38 (松开之前的大小)
  .eh_frame      0x0000000000010244       0x20 lib/orangescrt.a(write.o)
-                                         0x38 (size before relaxing)
+                                         0x38 (松开之前的大小)
  .eh_frame      0x0000000000010264       0x20 lib/orangescrt.a(close.o)
-                                         0x38 (size before relaxing)
+                                         0x38 (松开之前的大小)
  .eh_frame      0x0000000000010284       0x20 lib/orangescrt.a(getpid.o)
-                                         0x38 (size before relaxing)
+                                         0x38 (松开之前的大小)
  .eh_frame      0x00000000000102a4       0x20 lib/orangescrt.a(stat.o)
-                                         0x38 (size before relaxing)
+                                         0x38 (松开之前的大小)
  .eh_frame      0x00000000000102c4       0x20 lib/orangescrt.a(fork.o)
-                                         0x38 (size before relaxing)
+                                         0x38 (松开之前的大小)
  .eh_frame      0x00000000000102e4       0x20 lib/orangescrt.a(wait.o)
-                                         0x38 (size before relaxing)
+                                         0x38 (松开之前的大小)
  .eh_frame      0x0000000000010304       0x60 lib/orangescrt.a(exec.o)
-                                         0x78 (size before relaxing)
+                                         0x78 (松开之前的大小)
  *(.eh_frame.*)
 
 .gcc_except_table
@@ -778,7 +778,7 @@ LOAD lib/orangescrt.a
 .comment        0x0000000000000000       0x34
  *(.comment)
  .comment       0x0000000000000000       0x34 kernel/start.o
-                                         0x35 (size before relaxing)
+                                         0x35 (松开之前的大小)
  .comment       0x0000000000000034       0x35 kernel/main.o
  .comment       0x0000000000000034       0x35 kernel/clock.o
  .comment       0x0000000000000034       0x35 kernel/keyboard.o
