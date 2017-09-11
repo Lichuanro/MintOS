@@ -241,6 +241,8 @@ void shabby_shell(const char * tty_name)
 
 	char rdbuf[128];
 
+	clear();
+	boot_animation();
 	while (1) {
 		write(1, "$ ", 2);
 		int r = read(0, rdbuf, 70);
@@ -379,3 +381,8 @@ PUBLIC void panic(const char *fmt, ...)
 	__asm__ __volatile__("ud2");
 }
 
+void clear() {
+	int i = 0;
+	for (i = 0; i < 20; i++)
+		printf("\n");
+}
