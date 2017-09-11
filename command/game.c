@@ -1,5 +1,12 @@
 #include "stdio.h"
 
+#define N	15
+
+void initGame(void);
+void printChessboard(void);
+void playChess(void);
+int judge(int, int);
+
 void ClearArr(char *arr, int length);
 int mat_init(int *mat);
 int mat_left(int *mat);
@@ -15,6 +22,8 @@ int array(int n);
 
 unsigned int _seed2 = 0xDEADBEEF;
 int mtrx[100];
+int chessboard[N + 1][N + 1] = { 0 };
+int whoseTurn = 0;
 
 int main()
 {  
@@ -23,6 +32,7 @@ int main()
     printf("2. 2048\n");
     printf("3. GuessNumber\n");
     printf("4. Maigc Square\n");
+    printf("5. GoBang\n");
 
     char x[2];
     ClearArr(x, 2);
@@ -43,150 +53,14 @@ int main()
         case 4:
             MagicSquare();
             break;
+        case 5:
+            GoBang();
+            break;
         default:
             printf("Invaild number!\n");
     }
 } 
 
-int MineSweeper()
-{
-    char ui[8][8]=
-        {  
-            '+','+','+','+','+','+','+','+',  
-            '+','+','+','+','+','+','+','+',  
-            '+','+','+','+','+','+','+','+',  
-            '+','+','+','+','+','+','+','+',  
-            '+','+','+','+','+','+','+','+',  
-            '+','+','+','+','+','+','+','+',  
-            '+','+','+','+','+','+','+','+',  
-            '+','+','+','+','+','+','+','+'  
-        };  
-    int map[8][8]=
-        {  
-            0,0,0,0,0,0,0,0,  
-            0,0,1,0,0,1,0,0,  
-            0,0,0,0,1,0,0,0,  
-            0,0,0,0,0,1,0,0,  
-            0,0,1,0,0,0,0,0,  
-            0,0,1,0,0,0,0,0,  
-            0,1,0,1,1,0,0,0,  
-            1,0,0,0,0,0,0,0  
-        };  
-
-    int p[8][2]={{-1,-1} ,{-1,0},{-1,1},{0,-1},{0,1},{1,-1},{1,0},{1,1}};  
-    int i=0,j=0;   
-    int h=0,l=0; 
-    int h1=0,l1=0;  
-    int n=0;
-    int win=0;  
-    char x[2]; char y[2];
-
-    printf("**************************************\n");
-    printf("*              MineSweeper           *\n");
-    printf("**************************************\n");
-    printf("*  Enter 1-8 twice to locate the mine*\n");
-    printf("*  Enter q to quit                   *\n");
-    printf("**************************************\n\n");
-    while(1)  
-    {  
-        for(i=0;i<8;i++)  
-        {  
-            for(j=0;j<8;j++)  
-            {  
-                printf("%c ",ui[i][j]);  
-            }  
-            printf("\n");  
-        }  
-
-        printf("please enter the row number:");  
-        ClearArr(x, 2);
-        int r = read(0, x, 2);
-        h = x[0]-49+1;
-        if(x[0] == 'q') 
-            break;
-        while(!(h >=0 && h <= 7))
-        {
-            printf("Wrong input!\nplease enter the row number:");
-            r = read(0, x, 2);h = x[0]-49+1;
-        }
-
-        printf("please enter the col number:");
-        ClearArr(x, 2);
-        int r1 = read(0, y, 2);
-        l = y[0]-49+1;
-        if(y[0] == 'q') 
-        break;
-        while(!(l >=0 && l <= 7))
-        {
-            printf("Invaild number! Please input again:\n");
-            r1 = read(0, y, 2);l = y[0]-49+1;
-        }
-        if(map[h-1][l-1]==1)  
-        {  
-            printf("You Die!\n");  
-            break;  
-        }  
-        h=h-1;  
-        l=l-1;   
-
-        while(i<8)  
-        {  
-            n=0;  
-            h1=h;  
-            l1=l;   
-            h1= h1+p[i][0];  
-            l1=l1+p[i][1];  
-            if(h1>=0&&h1<8&&l1>=0&&l1<8)  
-                {  
-                    if(map[h1][l1]==1)  
-                        {  
-                            n++;  
-                        }    
-                }  
-
-            i++;  
-        }  
-
-        switch(n)  
-        {  
-            case 0:  
-                ui[h][l]='0';  
-                    break;  
-            case 1:  
-                ui[h][l]='1';  
-                    break;  
-            case 2:  
-                ui[h][l]='2';  
-                    break;  
-            case 3:  
-                ui[h][l]='3';  
-                    break;  
-            case 4:  
-                ui[h][l]='4';  
-                    break;  
-            case 5:  
-                ui[h][l]='5';  
-                    break;  
-            case 6:  
-                ui[h][l]='6';  
-                    break;  
-            case 7:  
-                ui[h][l]='7';  
-                    break;  
-            case 8:  
-                ui[h][l]='8';  
-                    break;  
-        }  
-        win++;  
-
-        if(win==54)  
-        {  
-            printf("You win!\n");  
-                break;  
-        }   
-    }  
-    return 0;  
-}
 
 void ClearArr(char *arr, int length)
 {
@@ -511,9 +385,9 @@ void GuessNumber()
     }
 
     if(times <= 2)
-        printf("You are really awesome!!!\n");
+        printf("You are really awesome!!!");
     else
-        printf("You Win, aha , just so so\n");
+        printf("You Win, aha , just so so");
     
     return;
 }
@@ -580,4 +454,258 @@ int array(int n)
     }
     printf("\n");
     return 0;
+}
+
+int GoBang(void)
+{
+	initGame();
+
+	while (1)
+	{
+		whoseTurn++;
+		playChess();
+	}
+
+	return 0;
+}
+
+void initGame(void)
+{
+	char c;
+	printChessboard();
+}
+
+void printChessboard(void)
+{
+	int i, j;
+
+	for (i = 0; i <= N; i++)
+	{
+		for (j = 0; j <= N; j++)
+		{
+			if (0 == i)
+				printf("%3d", j);
+			else if (j == 0)
+				printf("%3d", i);
+			else if (1 == chessboard[i][j])
+				printf("  @");
+			else if (2 == chessboard[i][j])
+				printf("  #");
+			else
+				printf("   ");
+		}
+		printf("\n");
+	}
+}
+
+void playChess(void)
+{
+	int i, j, winner;
+
+	if (1 == whoseTurn % 2)
+	{
+		printf("Player 1's turn:\n");
+
+		char x[3];
+		ClearArr(x, 3);
+		int r = read(0, x, 4);
+		int i = x[0]-49+1;
+        int j = x[2] - 49 + 1;
+        
+        if(x[0] == 'q')
+            return;
+
+		chessboard[i][j] = 1;
+	}
+	else
+	{
+		printf("Player 2's turn: \n");
+
+		char x[3];
+		ClearArr(x, 3);
+		int r = read(0, x, 4);
+		int i = x[0]-49+1;
+        int j = x[2] - 49 + 1;
+        
+        if(x[0] == 'q')
+            return;
+
+		chessboard[i][j] = 2;
+	}
+
+	printChessboard();
+	
+	if (judge(i, j))
+	{
+		if (1 == whoseTurn % 2)
+			printf("Player wins！\n");
+		else
+			printf("Player wins！\n");
+	}
+}
+
+int judge(int x, int y)
+{
+	int i, j;
+	int t = 2 - whoseTurn % 2;
+
+	for (i = x - 4, j = y; i <= x; i++)
+	{
+		if (i >= 1 && i <= N - 4 && t == chessboard[i][j] && t == chessboard[i + 1][j] && t == chessboard[i + 2][j] && t == chessboard[i + 3][j] && t == chessboard[i + 4][j])
+			return 1;
+	}
+	for (i = x, j = y - 4; j <= y; j++)
+	{
+		if (j >= 1 && j <= N - 4 && t == chessboard[i][j] && t == chessboard[i][j + 1] && t == chessboard[i][j + 1] && t == chessboard[i][j + 3] && t == chessboard[i][j + 4])
+			return 1;
+	}
+	for (i = x - 4, j = y - 4; i <= x, j <= y; i++, j++)
+	{
+		if (i >= 1 && i <= N - 4 && j >= 1 && j <= N - 4 && t == chessboard[i][j] && t == chessboard[i + 1][j + 1] && t == chessboard[i + 2][j + 2] && t == chessboard[i + 3][j + 3] && t == chessboard[i + 4][j + 4])
+			return 1;
+	}
+	for (i = x + 4, j = y - 4; i >= 1, j <= y; i--, j++)
+	{
+		if (i >= 1 && i <= N - 4 && j >= 1 && j <= N - 4 && t == chessboard[i][j] && t == chessboard[i - 1][j + 1] && t == chessboard[i - 2][j + 2] && t == chessboard[i - 3][j + 3] && t == chessboard[i - 4][j + 4])
+			return 1;
+	}
+
+	return 0;
+}
+
+int MineSweeper()
+{
+    char ui[8][8];
+
+    for(int i = 0 ; i < 8 ; i++)
+        for(int j = 0 ; j < 8 ; j++)
+            ui[i][j] = '+';
+
+    int map[8][8]=
+        {  
+            0,0,0,0,0,0,0,0,  
+            0,0,1,0,0,1,0,0,  
+            0,0,0,0,1,0,0,0,  
+            0,0,0,0,0,1,0,0,  
+            0,0,1,0,0,0,0,0,  
+            0,0,1,0,0,0,0,0,  
+            0,1,0,1,1,0,0,0,  
+            1,0,0,0,0,0,0,0  
+        };  
+
+    int p[8][2]={{-1,-1} ,{-1,0},{-1,1},{0,-1},{0,1},{1,-1},{1,0},{1,1}};  
+    int i=0,j=0;   
+    int h=0,l=0; 
+    int h1=0,l1=0;  
+    int n=0;
+    int win=0;  
+    char x[2]; char y[2];
+
+    printf("**************************************\n");
+    printf("*              MineSweeper           *\n");
+    printf("**************************************\n");
+    printf("*  Enter 1-8 twice to locate the mine*\n");
+    printf("*  Enter q to quit                   *\n");
+    printf("**************************************\n\n");
+    while(1)  
+    {  
+        for(i=0;i<8;i++)  
+        {  
+            for(j=0;j<8;j++)  
+            {  
+                printf("%c ",ui[i][j]);  
+            }  
+            printf("\n");  
+        }  
+
+        printf("please enter the row number:");  
+        ClearArr(x, 2);
+        int r = read(0, x, 2);
+        h = x[0]-49+1;
+        if(x[0] == 'q') 
+            break;
+        while(!(h >=0 && h <= 7))
+        {
+            printf("Wrong input!\nplease enter the row number:");
+            r = read(0, x, 2);h = x[0]-49+1;
+        }
+
+        printf("please enter the col number:");
+        ClearArr(x, 2);
+        int r1 = read(0, y, 2);
+        l = y[0]-49+1;
+        if(y[0] == 'q') 
+            break;
+
+        while(!(l >=0 && l <= 7))
+        {
+            printf("Invaild number! Please input again:\n");
+            r1 = read(0, y, 2);l = y[0]-49+1;
+        }
+        
+        if(map[h-1][l-1]==1)  
+        {  
+            printf("You Die!\n");  
+            break;  
+        }  
+        h=h-1;  
+        l=l-1;   
+
+        while(i<8)  
+        {  
+            n=0;  
+            h1=h;  
+            l1=l;   
+            h1= h1+p[i][0];  
+            l1=l1+p[i][1];  
+            if(h1>=0&&h1<8&&l1>=0&&l1<8)  
+                {  
+                    if(map[h1][l1]==1)  
+                        {  
+                            n++;  
+                        }    
+                }  
+
+            i++;  
+        }  
+
+        switch(n)  
+        {  
+            case 0:  
+                ui[h][l]='0';  
+                    break;  
+            case 1:  
+                ui[h][l]='1';  
+                    break;  
+            case 2:  
+                ui[h][l]='2';  
+                    break;  
+            case 3:  
+                ui[h][l]='3';  
+                    break;  
+            case 4:  
+                ui[h][l]='4';  
+                    break;  
+            case 5:  
+                ui[h][l]='5';  
+                    break;  
+            case 6:  
+                ui[h][l]='6';  
+                    break;  
+            case 7:  
+                ui[h][l]='7';  
+                    break;  
+            case 8:  
+                ui[h][l]='8';  
+                    break;  
+        }  
+        win++;  
+
+        if(win==54)  
+        {  
+            printf("You win!\n");  
+                break;  
+        }   
+    }  
+    return 0;  
 }

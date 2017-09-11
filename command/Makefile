@@ -53,12 +53,6 @@ pwd.o: pwd.c ../include/type.h ../include/stdio.h
 pwd : pwd.o start.o $(LIB)
 	$(LD) $(LDFLAGS) -o $@ $?
 
-saolei.o: saolei.c ../include/stdio.h
-	$(CC) $(CFLAGS) -o $@ $<
-
-saolei : saolei.o start.o $(LIB)
-	$(LD) $(LDFLAGS) -o $@ $?
-
 game.o: game.c ../include/stdio.h
 	$(CC) $(CFLAGS) -o $@ $<
 
