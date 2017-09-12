@@ -58,6 +58,7 @@ int main()
             break;
         default:
             printf("Invaild number!\n");
+            return;
     }
 } 
 
@@ -583,13 +584,13 @@ int MineSweeper()
 
     int map[8][8]=
         {  
-            0,0,0,0,0,0,0,0,  
-            0,0,1,0,0,1,0,0,  
             0,0,0,0,1,0,0,0,  
+            0,0,1,0,0,1,0,0,  
+            0,0,0,0,0,0,0,0,  
             0,0,0,0,0,1,0,0,  
+            0,0,1,0,1,0,0,0,  
             0,0,1,0,0,0,0,0,  
-            0,0,1,0,0,0,0,0,  
-            0,1,0,1,1,0,0,0,  
+            0,0,0,1,0,0,1,0,  
             1,0,0,0,0,0,0,0  
         };  
 
@@ -623,7 +624,7 @@ int MineSweeper()
         int r = read(0, x, 2);
         h = x[0]-49+1;
         if(x[0] == 'q') 
-            break;
+            return;
         while(!(h >=0 && h <= 7))
         {
             printf("Wrong input!\nplease enter the row number:");
@@ -635,7 +636,7 @@ int MineSweeper()
         int r1 = read(0, y, 2);
         l = y[0]-49+1;
         if(y[0] == 'q') 
-            break;
+            return ;
 
         while(!(l >=0 && l <= 7))
         {
