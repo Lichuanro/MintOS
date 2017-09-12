@@ -23,6 +23,10 @@ void eval(char *cmdline);
 int builtin_command(char** argv);
 int parseline(char* buf , char ** argv);
 char* strchr(char *s, char c);
+
+// global variables
+char current_dir[32] = "/";
+char current_user[16] = "root";
 /*****************************************************************************
  *                               kernel_main
  *****************************************************************************/
@@ -258,85 +262,19 @@ void shabby_shell(const char * tty_name)
 	assert(fd_stdout == 1);
 
 	char rdbuf[128];
-
 	clear();
 
-	// boot_animation();
-//	while (1) {
-//		write(1, "$ ", 2);
-//		int r = read(0, rdbuf, 70);
-//		rdbuf[r] = 0;
-//
-//		int argc = 0;
-//		char * argv[PROC_ORIGIN_STACK];
-//		char * p = rdbuf;
-//		char * s;
-//		int word = 0;
-//		char ch;
-//		do {
-//			ch = *p;
-//			if (*p != ' ' && *p != 0 && !word) {
-//				s = p;
-//				word = 1;
-//			}
-//			if ((*p == ' ' || *p == 0) && word) {
-//				word = 0;
-//				argv[argc++] = s;
-//				*p = 0;
-//			}
-//			p++;
-//		} while(ch);
-//		argv[argc] = 0;
-//
-//		int fd = open(argv[0], O_RDWR);
-//		if (fd == -1) {
-//			if (strcmp(rdbuf, "create") == 0) {
-//				createFile(argv[1]);
-//			}
-//			else if (strcmp(rdbuf, "write") == 0) {
-//				writeFile(argv[1]);
-//			}
-//			else if (strcmp(rdbuf, "open") == 0) {
-//				openFile(argv[1]);
-//			}
-//			else if (strcmp(rdbuf, "ls") == 0) {
-//				listFile();
-//			}
-//			else if (strcmp(rdbuf, "login") == 0) {
-//				userLogin(argv[1]);
-//			}
-//			else if (strcmp(rdbuf, "reg") == 0) {
-//				userRegister();
-//			}
-//			else {
-//				write(1, rdbuf, r);
-//				write(1, ": command not found\n", 20);
-//			}
-//		}
-//		else {
-//			close(fd);
-//			int pid = fork();
-//			if (pid != 0) { /* parent */
-//				int s;
-//				wait(&s);
-//			}
-//			else {	/* child */
-//				execv(argv[0], argv);
-//			}
-//		}
-
-	boot_animation();
-
-	while (1) 
+	//boot_animation();
+	while (1)
 	{
+		printf("%s@mintos ", current_user);
+		printf("%s", current_dir);
 		write(1, "> ", 2);
 		int r = read(0, rdbuf, 70);
 		rdbuf[r] = 0;
 
 		eval(rdbuf);
-
 	}
-
 	close(1);
 	close(0);
 }
@@ -348,26 +286,26 @@ void eval(char* command)
     int pid;           /* process id */
 
     /* parse command line */
-	bg = parseline(command, argv); 
-	
-    if (argv[0] == 0)  
+	bg = parseline(command, argv);
+
+    if (argv[0] == 0)
 		return;   /* ignore empty lines */
-    
+
 
 	int fd = open(argv[0], O_RDWR);
-	if (fd == -1) 
+	if (fd == -1)
 	{
 		if (!builtin_command(argv))
 			printf("%s: Command not found.\n", argv[0]);
 	}
 	else
 	{
-		if ((pid = fork()) == 0) 
-		{  
+		if ((pid = fork()) == 0)
+		{
 			execv(argv[0], argv);
 		}
 		else
-		{	
+		{
 			int s;
 			wait(&s);
 		}
@@ -375,16 +313,41 @@ void eval(char* command)
     return;
 }
 
-int builtin_command(char **argv )//todo 
+int builtin_command(char **argv )//todo
 {
 	if(!strcmp(argv[0] , "ls"))
 	{
-
+		ls(current_dir);
 		return 1;
 	}
-	else if(!strcmp(argv[0] , ""))
+	if(!strcmp(argv[0] , "create"))
 	{
-
+		createFile(argv[1]);
+		return 1;
+	}
+	if(!strcmp(argv[0] , "write"))
+	{
+		writeFile(argv[1]);
+		return 1;
+	}
+	if(!strcmp(argv[0] , "open"))
+	{
+		openFile(argv[1]);
+		return 1;
+	}
+	if(!strcmp(argv[0] , "ls"))
+	{
+		ls(current_dir);
+		return 1;
+	}
+	else if(!strcmp(argv[0] , "reg"))
+	{
+		userRegister();
+		return 1;
+	}
+  else if (!strcmp(argv[0], "login"))
+	{
+		userLogin(argv[1]);
 		return 1;
 	}
 	else if(!strcmp(argv[0], "quit"))
@@ -417,7 +380,7 @@ int parseline(char *cmdline ,char** argv)
 
     /* build the argv list */
     argc = 0;
-	while ((delim = strchr(buf, ' '))) 
+	while ((delim = strchr(buf, ' ')))
 	{
 		argv[argc++] = buf;
 		*delim = '\0';
@@ -426,10 +389,9 @@ int parseline(char *cmdline ,char** argv)
 			buf++;
     }
 	argv[argc] = 0;
-	
+
 	for(int i = 0 ; i < argc ; i++)
-		printf("%s\n",argv[i]);
-    
+
     if (argc == 0)  /* ignore blank line */
 		return 1;
 
@@ -555,13 +517,15 @@ void clear() {
 	//  char * final_name;
 	//  addTwoString(final_name, "/", filename);
   //  printf("%s\n", final_name);
-	 int fd = open(filename, O_CREAT);
+	 printf("%s\n", filename);
+	 int fd = open(filename, O_CREAT | O_RDWR);
 	 printf("fd: %d\n", fd);
 
-	 if (fd != -1){
-		 	 close(fd);
+	 if (fd == -1){
+		 printf("Cannot create file\n");
+		 return;
 	 }
-
+	 close(fd);
 	 return;
  }
 
@@ -585,15 +549,15 @@ void clear() {
 
  void openFile(char * filename) {
 	 int fd = open(filename, O_RDWR);
+	 if (fd == -1) {
+	 	 printf("Cannot find file: %s\n", filename);
+		 return;
+	 }
 	 char content[128];
 	 int n = read(fd, content, 128);
 	 content[n] = 0;
 	 printf("%s\n", content);
 	 close(fd);
- }
-
- void listFile() {
-
  }
 
  /*

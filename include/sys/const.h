@@ -160,7 +160,7 @@
  * @brief MESSAGE types
  */
 enum msgtype {
-	/* 
+	/*
 	 * when hard interrupt occurs, a msg (with type==HARD_INT) will
 	 * be sent to some tasks
 	 */
@@ -170,7 +170,7 @@ enum msgtype {
 	GET_TICKS, GET_PID, GET_RTC_TIME,
 
 	/* FS */
-	OPEN, CLOSE, READ, WRITE, LSEEK, STAT, UNLINK,
+	OPEN, CLOSE, READ, WRITE, LSEEK, STAT, UNLINK, LS, MKDIR,
 
 	/* FS & TTY */
 	SUSPEND_PROC, RESUME_PROC,

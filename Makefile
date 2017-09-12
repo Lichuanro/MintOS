@@ -42,6 +42,7 @@ OBJS		= kernel/kernel.o kernel/start.o kernel/main.o\
 LOBJS		=  lib/syscall.o\
 			lib/printf.o lib/vsprintf.o\
 			lib/string.o lib/misc.o\
+			lib/ls.o lib/mkdir.o\
 			lib/open.o lib/read.o lib/write.o lib/close.o lib/unlink.o\
 			lib/getpid.o lib/stat.o\
 			lib/fork.o lib/exit.o lib/wait.o lib/exec.o
@@ -211,4 +212,3 @@ fs/link.o: fs/link.c
 
 fs/disklog.o: fs/disklog.c
 	$(CC) $(CFLAGS) -o $@ $<
-

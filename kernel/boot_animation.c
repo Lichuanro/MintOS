@@ -77,7 +77,7 @@ printf("                                                                     \n"
 printf("                                                                     \n");
 printf("                                                                     \n");
 printf("                                                                   \n\n");
-milli_delay(3000);
+milli_delay(1500);
 
 
 clear();
@@ -107,7 +107,7 @@ printf("                                                                     \n"
 printf("                                                                     \n");
 printf("                                                                     \n");
 printf("                                                                   \n\n");
-milli_delay(3000);
+milli_delay(1500);
 
 clear();
 printf("                                                                     \n");
@@ -136,7 +136,7 @@ printf("                                                                     \n"
 printf("                                                                     \n");
 printf("                                                                     \n");
 printf("                                                                   \n\n");
-milli_delay(3000);
+milli_delay(1500);
 
 
 clear();
@@ -166,7 +166,7 @@ printf("                                                                     \n"
 printf("                                                                     \n");
 printf("                                                                     \n");
 printf("                                                                   \n\n");
-milli_delay(3000);
+milli_delay(1500);
 
 
 clear();
@@ -196,7 +196,7 @@ printf("                                                                     \n"
 printf("                                                                     \n");
 printf("                                                                     \n");
 printf("                                                                   \n\n");
-milli_delay(3000);
+milli_delay(1500);
 
 clear();
 printf("                                                                     \n");
@@ -225,7 +225,7 @@ printf("                                                                     \n"
 printf("                                                                     \n");
 printf("                                                                     \n");
 printf("                                                                   \n\n");
-milli_delay(3000);
+milli_delay(1500);
 
 clear();
 printf("                                                                     \n");
@@ -254,7 +254,7 @@ printf("                         ******                                      \n"
 printf("                          ***                                        \n");
 printf("                           *                                         \n");
 printf("                                                                   \n\n");
-milli_delay(3000);
+milli_delay(1500);
 
 clear();
 printf("                                                                     \n");
@@ -283,7 +283,7 @@ printf("                       ***********                                   \n"
 printf("                        *********                                    \n");
 printf("                         ******                                      \n");
 printf("                                                                   \n\n");
-milli_delay(3000);
+milli_delay(1500);
 
 clear();
 printf("                                                                     \n");
@@ -312,34 +312,34 @@ printf("                           *******                                   \n"
 printf("                        ***********                                  \n");
 printf("                       ************                                  \n");
 printf("                                                                   \n\n");
-milli_delay(3000);
+milli_delay(1500);
 
 clear();
 printf("                                                                     \n");
 printf("                                                                     \n");
 printf("                                                                     \n");
-printf("                                                                     \n");
-printf("                                                                     \n");
-printf("                                                                     \n");
-printf("                                                                     \n");
-printf("         MMM       MMM       IIIIII     NNN         NN   TTTTTTTTTTTT   \n");
-printf("       MM  MM     MM  MM       II      NN  NN       NN        TT        \n");
-printf("      MM    MM   MM    MM      II      NN    NN     NN        TT        \n");
-printf("      MM     MM MM     MM      II      NN     NN    NN        TT        \n");
-printf("      MM      MMM      MM      II      NN      NN   NN        TT        \n");
-printf("      MM               MM      II      NN       NN  NN        TT        \n");
-printf("      MM               MM    IIIIII    NN        NNNN         TT        \n");
-printf("                                                                     \n");
-printf("                                                                     \n");
-printf("                         By Xietian & Lichuanrong                                               \n");
-printf("                             2017.7---2017.9                                        \n");
-printf("                                                                     \n");
-printf("                                                                     \n");
-printf("                                                                     \n");
-printf("                                                                     \n");
-printf("                                                                     \n");
-printf("                              ****                                   \n");
-printf("                         **********                                  \n");
+printf("     **                                                              \n");
+printf("   ******                                                            \n");
+printf("  *******                                                            \n");
+printf("   ****                                                                    \n");
+printf("    **                                                                     \n");
+printf("     *                                                                     \n");
+printf("            MMM       MMM       IIIIII     NNN         NN   TTTTTTTTTTTT   \n");
+printf("          MM  MM     MM  MM       II      NN  NN       NN        TT        \n");
+printf("         MM    MM   MM    MM      II      NN    NN     NN        TT        \n");
+printf("         MM     MM MM     MM      II      NN     NN    NN        TT        \n");
+printf("         MM      MMM      MM      II      NN      NN   NN        TT        \n");
+printf("         MM               MM      II      NN       NN  NN        TT        \n");
+printf("         MM               MM    IIIIII    NN        NNNN         TT        \n");
+printf("                                                             *             \n");
+printf("                                                           ***             \n");
+printf("                             By Xietian & Lichuanrong    ******            \n");
+printf("                                 2017.7 -- 2017.9       ********           \n");
+printf("                                                         *******           \n");
+printf("                                                           ****            \n");
+printf("                                 ***                         *             \n");
+printf("                           ***********                       *             \n");
+printf("          *********************************************************        \n");
 printf("                                                                   \n\n");
 milli_delay(3000);
 }

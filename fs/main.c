@@ -1,7 +1,7 @@
 /*************************************************************************//**
  *****************************************************************************
  * @file   main.c
- * @brief  
+ * @brief
  * @author Forrest Y. Yu
  * @date   2007
  *****************************************************************************
@@ -33,7 +33,7 @@ PRIVATE int fs_exit();
  *****************************************************************************/
 /**
  * <Ring 1> The main loop of TASK FS.
- * 
+ *
  *****************************************************************************/
 PUBLIC void task_fs()
 {
@@ -71,6 +71,12 @@ PUBLIC void task_fs()
 		case EXIT:
 			fs_msg.RETVAL = fs_exit();
 			break;
+		case LS:
+			fs_msg.RETVAL = do_ls();
+			break;
+		case MKDIR:
+			fs_msg.RETVAL = do_mkdir();
+			break;
 		/* case LSEEK: */
 		/* 	fs_msg.OFFSET = do_lseek(); */
 		/* 	break; */
@@ -91,6 +97,7 @@ PUBLIC void task_fs()
 		msg_name[WRITE]  = "WRITE";
 		msg_name[LSEEK]  = "LSEEK";
 		msg_name[UNLINK] = "UNLINK";
+		msg_name[LS]     = "LS";
 		/* msg_name[FORK]   = "FORK"; */
 		/* msg_name[EXIT]   = "EXIT"; */
 		/* msg_name[STAT]   = "STAT"; */
@@ -106,6 +113,8 @@ PUBLIC void task_fs()
 		case WRITE:
 		case FORK:
 		case EXIT:
+		case MKDIR:
+		case LS:
 		/* case LSEEK: */
 		case STAT:
 			break;
@@ -129,7 +138,7 @@ PUBLIC void task_fs()
  *****************************************************************************/
 /**
  * <Ring 1> Do some preparation.
- * 
+ *
  *****************************************************************************/
 PRIVATE void init_fs()
 {
@@ -228,7 +237,7 @@ PRIVATE void mkfs()
 	WR_SECT(ROOT_DEV, 1);
 
 	printl("{FS} devbase:0x%x00, sb:0x%x00, imap:0x%x00, smap:0x%x00\n"
-	       "        inodes:0x%x00, 1st_sector:0x%x00\n", 
+	       "        inodes:0x%x00, 1st_sector:0x%x00\n",
 	       geo.base * 2,
 	       (geo.base + 1) * 2,
 	       (geo.base + 1 + 1) * 2,
@@ -279,7 +288,7 @@ PRIVATE void mkfs()
 
 	/* cmd.tar */
 	/* make sure it'll not be overwritten by the disk log */
-	assert(INSTALL_START_SECT + INSTALL_NR_SECTS < 
+	assert(INSTALL_START_SECT + INSTALL_NR_SECTS <
 	       sb.nr_sects - NR_SECTS_FOR_LOG);
 	int bit_offset = INSTALL_START_SECT -
 		sb.n_1st_sect + 1; /* sect M <-> bit (M - sb.n_1stsect + 1) */
@@ -357,14 +366,14 @@ PRIVATE void mkfs()
  *****************************************************************************/
 /**
  * <Ring 1> R/W a sector via messaging with the corresponding driver.
- * 
+ *
  * @param io_type  DEV_READ or DEV_WRITE
  * @param dev      device nr
  * @param pos      Byte offset from/to where to r/w.
  * @param bytes    r/w count in bytes.
  * @param proc_nr  To whom the buffer belongs.
  * @param buf      r/w buffer.
- * 
+ *
  * @return Zero if success.
  *****************************************************************************/
 PUBLIC int rw_sector(int io_type, int dev, u64 pos, int bytes, int proc_nr,
@@ -391,7 +400,7 @@ PUBLIC int rw_sector(int io_type, int dev, u64 pos, int bytes, int proc_nr,
 /**
  * <Ring 1> Read super block from the given device then write it into a free
  *          super_block[] slot.
- * 
+ *
  * @param dev  From which device the super block comes.
  *****************************************************************************/
 PRIVATE void read_super_block(int dev)
@@ -429,9 +438,9 @@ PRIVATE void read_super_block(int dev)
  *****************************************************************************/
 /**
  * <Ring 1> Get the super block from super_block[].
- * 
+ *
  * @param dev Device nr.
- * 
+ *
  * @return Super block ptr.
  *****************************************************************************/
 PUBLIC struct super_block * get_super_block(int dev)
@@ -454,10 +463,10 @@ PUBLIC struct super_block * get_super_block(int dev)
  * <Ring 1> Get the inode ptr of given inode nr. A cache -- inode_table[] -- is
  * maintained to make things faster. If the inode requested is already there,
  * just return it. Otherwise the inode will be read from the disk.
- * 
+ *
  * @param dev Device nr.
  * @param num I-node nr.
- * 
+ *
  * @return The inode ptr requested.
  *****************************************************************************/
 PUBLIC struct inode * get_inode(int dev, int num)
@@ -510,7 +519,7 @@ PUBLIC struct inode * get_inode(int dev, int num)
  * Decrease the reference nr of a slot in inode_table[]. When the nr reaches
  * zero, it means the inode is not used any more and can be overwritten by
  * a new inode.
- * 
+ *
  * @param pinode I-node ptr.
  *****************************************************************************/
 PUBLIC void put_inode(struct inode * pinode)
@@ -525,7 +534,7 @@ PUBLIC void put_inode(struct inode * pinode)
 /**
  * <Ring 1> Write the inode back to the disk. Commonly invoked as soon as the
  *          inode is changed.
- * 
+ *
  * @param p I-node ptr.
  *****************************************************************************/
 PUBLIC void sync_inode(struct inode * p)
@@ -550,7 +559,7 @@ PUBLIC void sync_inode(struct inode * p)
  *****************************************************************************/
 /**
  * Perform the aspects of fork() that relate to files.
- * 
+ *
  * @return Zero if success, otherwise a negative integer.
  *****************************************************************************/
 PRIVATE int fs_fork()
@@ -573,7 +582,7 @@ PRIVATE int fs_fork()
  *****************************************************************************/
 /**
  * Perform the aspects of exit() that relate to files.
- * 
+ *
  * @return Zero if success.
  *****************************************************************************/
 PRIVATE int fs_exit()
@@ -592,4 +601,3 @@ PRIVATE int fs_exit()
 	}
 	return 0;
 }
-
