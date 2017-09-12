@@ -17,7 +17,12 @@
 #include "global.h"
 #include "proto.h"
 
+#define NULL 0
 
+void eval(char *cmdline);
+int builtin_command(char** argv);
+int parseline(char* buf , char ** argv);
+char* strchr(char *s, char c);
 /*****************************************************************************
  *                               kernel_main
  *****************************************************************************/
@@ -232,6 +237,8 @@ void untar(const char * filename)
  * 
  * @param tty_name  TTY file name.
  *****************************************************************************/
+
+
 void shabby_shell(const char * tty_name)
 {
 	int fd_stdin  = open(tty_name, O_RDWR);
@@ -243,55 +250,117 @@ void shabby_shell(const char * tty_name)
 
 	clear();
 	boot_animation();
-	while (1) {
-		write(1, "$ ", 2);
+
+	while (1) 
+	{
+		write(1, "> ", 2);
 		int r = read(0, rdbuf, 70);
 		rdbuf[r] = 0;
 
-		int argc = 0;
-		char * argv[PROC_ORIGIN_STACK];
-		char * p = rdbuf;
-		char * s;
-		int word = 0;
-		char ch;
-		do {
-			ch = *p;
-			if (*p != ' ' && *p != 0 && !word) {
-				s = p;
-				word = 1;
-			}
-			if ((*p == ' ' || *p == 0) && word) {
-				word = 0;
-				argv[argc++] = s;
-				*p = 0;
-			}
-			p++;
-		} while(ch);
-		argv[argc] = 0;
-
-		int fd = open(argv[0], O_RDWR);
-		if (fd == -1) {
-			if (rdbuf[0]) {
-				write(1, "{", 1);
-				write(1, rdbuf, r);
-				write(1, "}\n", 2);
-			}
-		}
-		else {
-			close(fd);
-			int pid = fork();
-			if (pid != 0) { /* parent */
-				int s;
-				wait(&s);
-			}
-			else {	/* child */
-				execv(argv[0], argv);
-			}
-		}
+		eval(rdbuf);
 	}
 
 	close(1);
 	close(0);
+}
+
+void eval(char* command)
+{
+	char *argv[128]; /* argv for execve() */
+    int bg;              /* should the job run in bg or fg? */
+    int pid;           /* process id */
+
+    /* parse command line */
+	bg = parseline(command, argv); 
+	
+    if (argv[0] == 0)  
+		return;   /* ignore empty lines */
+    
+
+	int fd = open(argv[0], O_RDWR);
+	if (fd == -1) 
+	{
+		if (!builtin_command(argv))
+			printf("%s: Command not found.\n", argv[0]);
+	}
+	else
+	{
+		if ((pid = fork()) == 0) 
+		{  
+			execv(argv[0], argv);
+		}
+		else
+		{	
+			int s;
+			wait(&s);
+		}
+	}
+    return;
+}
+
+int builtin_command(char **argv )//todo 
+{
+	if(!strcmp(argv[0] , "ls"))
+	{
+
+		return 1;
+	}
+	else if(!strcmp(argv[0] , ""))
+	{
+
+		return 1;
+	}
+	else if(!strcmp(argv[0], "quit"))
+		exit(0);  /* terminate shell */
+	else
+		return 0;
+}
+
+char* strchr(char *s, char c)
+{
+    while(*s != '\0' && *s != c )
+    {
+        ++s;
+    }
+    return *s==c ? s : 0;
+}
+
+int parseline(char *cmdline ,char** argv)
+{
+	char array[128]; /* holds local copy of command line */
+    char *buf = array;   /* ptr that traverses command line */
+    char *delim;         /* points to first space delimiter */
+    int argc;            /* number of args */
+    int bg;              /* background job? */
+
+    strcpy(buf, cmdline);
+    buf[strlen(buf)] = ' ';  /* replace trailing '\n' with space */
+    while (*buf && (*buf == ' ')) /* ignore leading spaces */
+		buf++;
+
+    /* build the argv list */
+    argc = 0;
+	while ((delim = strchr(buf, ' '))) 
+	{
+		argv[argc++] = buf;
+		*delim = '\0';
+		buf = delim + 1;
+		while (*buf && (*buf == ' ')) /* ignore spaces */
+			buf++;
+    }
+	argv[argc] = 0;
+	
+	for(int i = 0 ; i < argc ; i++)
+		printf("%s\n",argv[i]);
+    
+    if (argc == 0)  /* ignore blank line */
+		return 1;
+
+    /* should the job run in the background? */
+    if ((bg = (*argv[argc-1] == '&')) != 0)
+		argv[--argc] = 0;
+
+    return bg;
 }
 
 /*****************************************************************************
