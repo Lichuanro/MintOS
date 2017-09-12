@@ -22,8 +22,8 @@
  *                               kernel_main
  *****************************************************************************/
 /**
- * jmp from kernel.asm::_start. 
- * 
+ * jmp from kernel.asm::_start.
+ *
  *****************************************************************************/
 PUBLIC int kernel_main()
 {
@@ -171,12 +171,23 @@ struct posix_tar_header
 	/* 500 */
 };
 
+
+/*****************************************************************************
+ *                            username & password
+ *****************************************************************************/
+struct user {
+	char username[10];
+	char password[10];
+};
+
+struct user users[3];
+
 /*****************************************************************************
  *                                untar
  *****************************************************************************/
 /**
  * Extract the tar file and store them.
- * 
+ *
  * @param filename The tar file.
  *****************************************************************************/
 void untar(const char * filename)
@@ -229,7 +240,7 @@ void untar(const char * filename)
  *****************************************************************************/
 /**
  * A very very simple shell.
- * 
+ *
  * @param tty_name  TTY file name.
  *****************************************************************************/
 void shabby_shell(const char * tty_name)
@@ -242,7 +253,7 @@ void shabby_shell(const char * tty_name)
 	char rdbuf[128];
 
 	clear();
-	boot_animation();
+	// boot_animation();
 	while (1) {
 		write(1, "$ ", 2);
 		int r = read(0, rdbuf, 70);
@@ -271,10 +282,27 @@ void shabby_shell(const char * tty_name)
 
 		int fd = open(argv[0], O_RDWR);
 		if (fd == -1) {
-			if (rdbuf[0]) {
-				write(1, "{", 1);
+			if (strcmp(rdbuf, "create") == 0) {
+				createFile(argv[1]);
+			}
+			else if (strcmp(rdbuf, "write") == 0) {
+				writeFile(argv[1]);
+			}
+			else if (strcmp(rdbuf, "open") == 0) {
+				openFile(argv[1]);
+			}
+			else if (strcmp(rdbuf, "ls") == 0) {
+				listFile();
+			}
+			else if (strcmp(rdbuf, "login") == 0) {
+				userLogin(argv[1]);
+			}
+			else if (strcmp(rdbuf, "reg") == 0) {
+				userRegister();
+			}
+			else {
 				write(1, rdbuf, r);
-				write(1, "}\n", 2);
+				write(1, ": command not found\n", 20);
 			}
 		}
 		else {
@@ -299,7 +327,7 @@ void shabby_shell(const char * tty_name)
  *****************************************************************************/
 /**
  * The hen.
- * 
+ *
  *****************************************************************************/
 void Init()
 {
@@ -310,7 +338,7 @@ void Init()
 
 	/* extract `cmd.tar' */
 	untar("/cmd.tar");
-			
+
 
 	char * tty_list[] = {"/dev_tty0"};
 
@@ -322,7 +350,7 @@ void Init()
 		else {	/* child process */
 			close(fd_stdin);
 			close(fd_stdout);
-			
+
 			shabby_shell(tty_list[i]);
 			assert(0);
 		}
@@ -386,3 +414,119 @@ void clear() {
 	for (i = 0; i < 20; i++)
 		printf("\n");
 }
+
+/*****************************************************************************
+ *                    below are help functions for file system
+ *****************************************************************************/
+
+ void addTwoString(char *to_str,char *from_str1,char *from_str2){
+    int i=0,j=0;
+    while(from_str1[i]!=0)
+        to_str[j++]=from_str1[i++];
+    i=0;
+    while(from_str2[i]!=0)
+        to_str[j++]=from_str2[i++];
+    to_str[j]=0;
+ }
+
+ /*
+ * create a file
+ */
+
+ void createFile(char * filename) {
+	//  char * final_name;
+	//  addTwoString(final_name, "/", filename);
+  //  printf("%s\n", final_name);
+	 int fd = open(filename, O_CREAT);
+	 printf("fd: %d\n", fd);
+
+	 if (fd != -1){
+		 	 close(fd);
+	 }
+
+	 return;
+ }
+
+ /*
+ * write an existing file
+ */
+
+ void writeFile(char * filename) {
+	 int fd = open(filename, O_RDWR);
+	 char rdbuf[128];
+	 int n = read(0, rdbuf, 128);
+	 rdbuf[n] = 0;
+	 write(fd, rdbuf, n);
+	 printf("write finished!\n");
+	 close(fd);
+ }
+
+ /*
+ * open and read an existing file
+ */
+
+ void openFile(char * filename) {
+	 int fd = open(filename, O_RDWR);
+	 char content[128];
+	 int n = read(fd, content, 128);
+	 content[n] = 0;
+	 printf("%s\n", content);
+	 close(fd);
+ }
+
+ void listFile() {
+
+ }
+
+ /*
+ @return 0 for success and -1 for fail
+ */
+
+ int userRegister() {
+ 	 printf("Enter username\n");
+	 char rdbuf[10];
+	 int n = read(0, rdbuf, 10);
+	 rdbuf[n] = 0;
+	 for (int i = 0; i < 3; i++) {
+	   if (strcmp(users[i].username, rdbuf) == 0)  {
+			 printf("username invalid\n");
+			 return -1;
+		 }
+	 }
+
+	 for (int i = 0; i < 3; i++) {
+		 if (strcmp(users[i].username, "") == 0) {
+			 strcpy(users[i].username, rdbuf);
+			 printf("Enter password\n");
+			 char rdbuf_pw[10];
+			 int n = read(0, rdbuf_pw, 10);
+			 rdbuf_pw[n] = 0;
+			 strcpy(users[i].password, rdbuf_pw);
+			 printf("%s\n", users[i].password);
+			 return 0;
+		 }
+	 }
+	 return -1;
+ }
+
+ /*
+ @param username the username to login
+ @return 0 for success and -1 for fail
+ */
+
+ int userLogin(char * username) {
+	 for (int i = 0; i < 3; i++) {
+		 if (strcmp(users[i].username, username) == 0) {
+			 printf("Enter password to login\n");
+			 char rdbuf_pw[10];
+			 int n = read(0, rdbuf_pw, 10);
+			 rdbuf_pw[n] = 0;
+			 if (strcmp(users[i].password, rdbuf_pw) == 0) {
+				 printf("Welcome, %s\n", username);
+				 return 0;
+			 }
+		 }
+	 }
+	 printf("login denied.\n");
+	 return -1;
+ }
