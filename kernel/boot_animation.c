@@ -30,7 +30,7 @@ printf("                                                ***********          \n"
 printf("                                                 *********           \n");
 printf("                                                  ******             \n");
 printf("                                                   ***               \n");
-printf("                                                    *                \n");
+printf("                                                     *               \n");
 printf("                                                                     \n");
 printf("                                                                     \n");
 printf("                                                                     \n");
@@ -62,7 +62,7 @@ printf("                                           ***********               \n"
 printf("                                            *********                \n");
 printf("                                             ******                  \n");
 printf("                                              ***                    \n");
-printf("                                               *                     \n");
+printf("                                                *                    \n");
 printf("                                                                     \n");
 printf("                                                                     \n");
 printf("                                                                     \n");
@@ -94,7 +94,7 @@ printf("                                         ***********                 \n"
 printf("                                          *********                  \n");
 printf("                                           ******                    \n");
 printf("                                            ***                      \n");
-printf("                                             *                       \n");
+printf("                                              *                      \n");
 printf("                                                                     \n");
 printf("                                                                     \n");
 printf("                                                                     \n");
@@ -125,7 +125,7 @@ printf("                                    ***********                      \n"
 printf("                                     *********                       \n");
 printf("                                      ******                         \n");
 printf("                                       ***                           \n");
-printf("                                        *                            \n");
+printf("                                         *                           \n");
 printf("                                                                     \n");
 printf("                                                                     \n");
 printf("                                                                     \n");
@@ -157,7 +157,7 @@ printf("                               ***********                           \n"
 printf("                                *********                            \n");
 printf("                                 ******                              \n");
 printf("                                  ***                                \n");
-printf("                                   *                                 \n");
+printf("                                    *                                \n");
 printf("                                                                     \n");
 printf("                                                                     \n");
 printf("                                                                     \n");
@@ -189,7 +189,7 @@ printf("                          ***********                                \n"
 printf("                           *********                                 \n");
 printf("                            ******                                   \n");
 printf("                             ***                                     \n");
-printf("                              *                                      \n");
+printf("                               *                                     \n");
 printf("                                                                     \n");
 printf("                                                                     \n");
 printf("                                                                     \n");
@@ -220,7 +220,7 @@ printf("                            ***********                              \n"
 printf("                             *********                               \n");
 printf("                              ******                                 \n");
 printf("                               ***                                   \n");
-printf("                                *                                    \n");
+printf("                                 *                                   \n");
 printf("                                                                     \n");
 printf("                                                                     \n");
 printf("                                                                     \n");
@@ -252,7 +252,7 @@ printf("                       ***********                                   \n"
 printf("                        *********                                    \n");
 printf("                         ******                                      \n");
 printf("                          ***                                        \n");
-printf("                           *                                         \n");
+printf("                            *                                        \n");
 printf("                                                                   \n\n");
 milli_delay(1500);
 

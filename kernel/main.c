@@ -25,7 +25,7 @@ int parseline(char* buf , char ** argv);
 char* strchr(char *s, char c);
 
 // global variables
-char current_dir[32] = "/";
+char current_dir[64] = "/";
 char current_user[16] = "root";
 /*****************************************************************************
  *                               kernel_main
@@ -320,9 +320,85 @@ int builtin_command(char **argv )//todo
 		ls(current_dir);
 		return 1;
 	}
+	if(!strcmp(argv[0] , "mkdir"))
+	{
+		char full_dirname[64];
+		addTwoString(full_dirname, current_dir, argv[1]);
+		int fd = mkdir(full_dirname);
+		if (fd == -1) {
+			printf("Cannot create directory\n");
+			return 1;
+		}
+		printf("%s: directory create success\n", argv[1]);
+		return 1;
+	}
+	if(!strcmp(argv[0] , "cd"))
+	{
+		// relative path
+		char full_path[64];
+		char tmp[64];
+		if (argv[1][0] != "/") {
+			addTwoString(tmp, current_dir, argv[1]);
+			memcpy(full_path, tmp, 64);
+		}
+		// absolute path
+		else if (argv[1][0] == "/") {
+			memcpy(full_path, argv[1], 64);
+		}
+		int fd = open(full_path, O_RDWR);
+		if (fd == -1) {
+			printf("Cannot change directory\n");
+			return 1;
+		}
+		memcpy(current_dir, full_path, 64);
+		// strcpy(current_dir, full_path);
+		printf("%s\n", current_dir);
+		return 1;
+	}
 	if(!strcmp(argv[0] , "create"))
 	{
-		createFile(argv[1]);
+		char full_filename[64];
+		char tmp[64];
+		if (argv[1][0] != "/") {
+			addTwoString(tmp, current_dir, argv[1]);
+			memcpy(full_filename, tmp, 64);
+		}
+		int fd = open(full_filename, O_CREAT | O_RDWR);
+
+		if (fd == -1){
+			printf("Cannot create file\n");
+			return 1;
+		}
+		printf("%s: file create success\n", argv[1]);
+		close(fd);
+
+		return 1;
+	}
+	if(!strcmp(argv[0] , "rm"))
+	{
+		char full_path[64];
+		char tmp[64];
+		// relative path
+		if (argv[1][0]!='/') {
+				addTwoString(tmp, current_dir, argv[1]);
+				memcpy(full_path, tmp, 64);
+		}
+
+		int result;
+		result = unlink(full_path);
+		if (result == 0)
+		{
+				printf("%s: file deleted!\n", argv[1]);
+		}
+		else
+		{
+				printf("Cannot delete file\n");
+		}
+		return 1;
+	}
+	if(!strcmp(argv[0] , "pwd"))
+	{
+		printf("%s\n", current_dir);
 		return 1;
 	}
 	if(!strcmp(argv[0] , "write"))
@@ -553,6 +629,7 @@ void clear() {
 	 	 printf("Cannot find file: %s\n", filename);
 		 return;
 	 }
+	 printf("%dn", fd);
 	 char content[128];
 	 int n = read(fd, content, 128);
 	 content[n] = 0;
@@ -605,6 +682,7 @@ void clear() {
 			 rdbuf_pw[n] = 0;
 			 if (strcmp(users[i].password, rdbuf_pw) == 0) {
 				 printf("Welcome, %s\n", username);
+				 strcpy(current_user, username);
 				 return 0;
 			 }
 		 }
