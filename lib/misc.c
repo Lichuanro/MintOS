@@ -191,3 +191,47 @@ PUBLIC void assertion_failure(char *exp, char *file, char *base_file, int line)
 	/* should never arrive here */
         __asm__ __volatile__("ud2");
 }
+
+PUBLIC int strcmp_length(const char * s1, const char *s2 , int length)
+{
+	if ((s1 == 0) || (s2 == 0)) { /* for robustness */
+		return (s1 - s2);
+	}
+
+	const char * p1 = s1;
+	const char * p2 = s2;
+	int l;
+
+	for (l = 0; *p1 && *p2 && l < length; p1++,p2++) 
+	{
+		if (*p1 != *p2) 
+		{
+			break;
+		}
+		l++;
+	}
+
+	if(l == length )
+		return 0;
+
+	return (*p1 - *p2);
+}
+
+PUBLIC char* strchr(char *s, char c)
+{
+    while(*s != '\0' && *s != c )
+    {
+        ++s;
+    }
+    return *s==c ? s : 0;
+}
+
+PUBLIC void addTwoString(char *to_str,char *from_str1,char *from_str2){
+    int i=0,j=0;
+    while(from_str1[i]!=0)
+        to_str[j++]=from_str1[i++];
+    i=0;
+    while(from_str2[i]!=0)
+        to_str[j++]=from_str2[i++];
+    to_str[j]=0;
+ }

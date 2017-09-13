@@ -22,7 +22,7 @@
 void eval(char *cmdline);
 int builtin_command(char** argv);
 int parseline(char* buf , char ** argv);
-char* strchr(char *s, char c);
+void ShowComplete(char *command);
 
 // global variables
 char current_dir[64] = "/";
@@ -297,7 +297,10 @@ void eval(char* command)
 	if (fd == -1)
 	{
 		if (!builtin_command(argv))
+		{
 			printf("%s: Command not found.\n", argv[0]);
+			ShowComplete(command);		
+		}
 	}
 	else
 	{
@@ -305,17 +308,26 @@ void eval(char* command)
 		{
 			execv(argv[0], argv);
 		}
-		else
+		// else
+		// {
+		// 	int s;
+		// 	wait(&s);
+		// }
+		if(!bg)
 		{
 			int s;
 			wait(&s);
 		}
+		else
+			printf("%d %s",pid,command);
 	}
     return;
 }
 
 int builtin_command(char **argv )//todo
 {
+	if (!strcmp(argv[0], "&"))    /* Ignore singleton & */
+		return 1;
 	if(!strcmp(argv[0] , "ls"))
 	{
 		ls(current_dir);
@@ -433,14 +445,6 @@ int builtin_command(char **argv )//todo
 		return 0;
 }
 
-char* strchr(char *s, char c)
-{
-    while(*s != '\0' && *s != c )
-    {
-        ++s;
-    }
-    return *s==c ? s : 0;
-}
 
 int parseline(char *cmdline ,char** argv)
 {
@@ -593,16 +597,6 @@ void clear() {
  *                    below are help functions for file system
  *****************************************************************************/
 
- void addTwoString(char *to_str,char *from_str1,char *from_str2){
-    int i=0,j=0;
-    while(from_str1[i]!=0)
-        to_str[j++]=from_str1[i++];
-    i=0;
-    while(from_str2[i]!=0)
-        to_str[j++]=from_str2[i++];
-    to_str[j]=0;
- }
-
  /*
  * create a file
  */
@@ -709,3 +703,28 @@ void clear() {
 	 return -1;
  }
 
+
+ void ShowComplete(char *command)
+ {
+	char resource[][10] = {"ls","help","mkdir","create","rm","quit","login","reg","open","write","cd","pwd",
+						"game"};
+	int size = 13; //change when resouce changes 
+	int isFirst = 1;
+
+	for(int i = 0 ; i < size ; i++)
+	{
+		if(!strcmp_length(command,resource[i],strlen(command)))
+		{
+			if(isFirst)
+			{
+				printf("Maybe you mean %s " , resource[i]);
+				isFirst = 0;
+			}
+			else
+				printf("/ %s ", resource[i]);
+		}
+	}
+	printf("?\n\n");
+
+ }
+ 
