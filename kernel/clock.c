@@ -35,7 +35,20 @@ PUBLIC void clock_handler(int irq)
 		ticks = 0;
 
 	if (p_proc_ready->ticks)
+	{
 		p_proc_ready->ticks--;
+		p_proc_ready->runned_times++;//次数增加		
+	}
+
+	if(p_proc_ready->runned_times >= p_proc_ready->priority/2)//运行次数增加 优先级降低
+	{
+		p_proc_ready->ticks = 0;
+		p_proc_ready->priority = p_proc_ready->priority/2;
+		if(p_proc_ready->priority == 0){
+			p_proc_ready->priority = 1;
+		}
+	    p_proc_ready->runned_times = 0;	
+	}
 
 	if (key_pressed)
 		inform_int(TASK_TTY);
