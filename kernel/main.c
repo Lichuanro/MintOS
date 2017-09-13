@@ -271,8 +271,14 @@ void shabby_shell(const char * tty_name)
 		printf("%s@mintos ", current_user);
 		printf("%s", current_dir);
 		write(1, "> ", 2);
-		int r = read(0, rdbuf, 70);
-		rdbuf[r] = 0;
+
+		int r;
+		if ((r = read(0, rdbuf, 70)) == 0)
+			continue;
+		else
+		{
+			rdbuf[r] = 0;
+		}
 
 		eval(rdbuf);
 	}
@@ -326,6 +332,11 @@ void eval(char* command)
 
 int builtin_command(char **argv )//todo
 {
+	// if(!strcmp(argv[0],"clear"))
+	// {
+	// 	clear();
+	// }
+
 	if (!strcmp(argv[0], "&"))    /* Ignore singleton & */
 		return 1;
 	if(!strcmp(argv[0] , "ls"))
@@ -587,10 +598,14 @@ PUBLIC void panic(const char *fmt, ...)
 	__asm__ __volatile__("ud2");
 }
 
-void clear() {
+void clear() 
+{
 	int i = 0;
 	for (i = 0; i < 20; i++)
 		printf("\n");
+	// clear_screen(0,console_table[current_console].cursor);
+    // console_table[current_console].crtc_start = console_table[current_console].orig;
+    // console_table[current_console].cursor = console_table[current_console].orig;    
 }
 
 /*****************************************************************************
@@ -754,11 +769,11 @@ void clear() {
 			if(Score[temp] < Score[i])
 				temp = i;
 		if(Score[temp] > 0.5)
-			printf("Maybe you mean %s " , resource[temp]);
+			printf("Maybe you mean %s ?" , resource[temp]);
 	}
 
 
-	printf("?\n\n");
+	printf("\n\n");
 
  }
  
