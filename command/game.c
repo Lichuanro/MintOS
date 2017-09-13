@@ -33,6 +33,7 @@ int main()
     printf("3. GuessNumber\n");
     printf("4. Maigc Square\n");
     printf("5. GoBang\n");
+    printf("6. Eight Queen\n");
 
     char x[2];
     ClearArr(x, 2);
@@ -56,6 +57,9 @@ int main()
         case 5:
             GoBang();
             break;
+        case 6:
+            EightQueen();
+            break;  
         default:
             printf("Invaild number!\n");
             return;
@@ -582,17 +586,24 @@ int MineSweeper()
         for(int j = 0 ; j < 8 ; j++)
             ui[i][j] = '+';
 
-    int map[8][8]=
-        {  
-            0,0,0,0,1,0,0,0,  
-            0,0,1,0,0,1,0,0,  
-            0,0,0,0,0,0,0,0,  
-            0,0,0,0,0,1,0,0,  
-            0,0,1,0,1,0,0,0,  
-            0,0,1,0,0,0,0,0,  
-            0,0,0,1,0,0,1,0,  
-            1,0,0,0,0,0,0,0  
-        };  
+    int map[8][8];
+    int count = 10;
+
+    for(int i = 0 ;i < 8 ;i++)
+        for(int j = 0 ; j < 8 ; j++)
+            map[i][j] = 0;
+
+    while(count != 0)
+    {
+        int t = rand() % 64;
+        int i = t / 8;
+        int j = t % 8;
+        if(map[i][j] == 0)
+        {
+            count--;
+            map[i][j] = 1;
+        }
+    }
 
     int p[8][2]={{-1,-1} ,{-1,0},{-1,1},{0,-1},{0,1},{1,-1},{1,0},{1,1}};  
     int i=0,j=0;   
@@ -625,7 +636,7 @@ int MineSweeper()
         h = x[0]-49+1;
         if(x[0] == 'q') 
             return;
-        while(!(h >=0 && h <= 7))
+        while(!(h >=1 && h <= 8))
         {
             printf("Wrong input!\nplease enter the row number:");
             r = read(0, x, 2);h = x[0]-49+1;
@@ -638,7 +649,7 @@ int MineSweeper()
         if(y[0] == 'q') 
             return ;
 
-        while(!(l >=0 && l <= 7))
+        while(!(l >=1 && l <= 8))
         {
             printf("Invaild number! Please input again:\n");
             r1 = read(0, y, 2);l = y[0]-49+1;
@@ -709,4 +720,64 @@ int MineSweeper()
         }   
     }  
     return 0;  
+}
+
+#define N 8
+
+int column[N+1];//同栏是否有皇后
+int rup[2*N +1];//右上至左下是否有皇后
+int lup[2*N +1];//左上至右下是否有皇后
+int queen[N+1] = {0};
+int num ;//解答编号
+
+void backtrack(int);//递回求解
+
+void EightQueen()
+{
+	int i;
+	num = 0;
+	for(i=1;i<=N;i++)
+		column[i] = 1;
+
+	for(i=1;i<=2*N;i++)
+		rup[i] = lup[i] = 1;
+
+	backtrack(1);
+
+	return 0;
+}
+
+void showAnswer()
+{
+	int x,y;
+	printf("\n Answer %d\n",++num);
+	for (y=1;y<=N;y++)
+	{
+		for (x=1;x<=N;x++)
+		{
+			if(queen[y] == x)
+				printf("Q");
+			else
+				printf("K");
+		}
+		printf("\n");
+	}
+}
+
+void backtrack(int i)
+{
+	int j;
+	if(i > N)
+		showAnswer();
+	else
+		for (j=1;j<=N;j++)
+		{
+			if(column[j] == 1 && rup[i+j] == 1 &&lup[i-j+N] == 1){
+				queen[i] = j;
+				//设定为占用
+				column[j] = rup[i+j] = lup[i-j+N] = 0;
+				backtrack(i+1);
+				column[j] = rup[i+j] = lup[i-j+N] = 1; //在左下角递归完后进行下一个位置的递归运算                                                                                       
+			}
+		}
 }
