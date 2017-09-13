@@ -703,27 +703,61 @@ void clear() {
 	 return -1;
  }
 
+ double CaclSimilarity(const char *command ,const char *target)
+ {
+	int length = strlen(command);
+	int count = 0;
+
+	for(int i = 0 ; i < length ; i++)
+	{
+		if(command[i] == target[i])
+			count++;
+	}
+
+	return (double) count / strlen(target);
+
+ }
 
  void ShowComplete(char *command)
  {
 	char resource[][10] = {"ls","help","mkdir","create","rm","quit","login","reg","open","write","cd","pwd",
 						"game"};
-	int size = 13; //change when resouce changes 
+
+	int size = 13; //记得改
+	double Score[size];
 	int isFirst = 1;
+	int isExist = 0;
+	int temp = 0; 
 
 	for(int i = 0 ; i < size ; i++)
 	{
-		if(!strcmp_length(command,resource[i],strlen(command)))
+		if(!strcmp_length(command,resource[i],strlen(command)))//是否完全相等
 		{
 			if(isFirst)
 			{
 				printf("Maybe you mean %s " , resource[i]);
 				isFirst = 0;
+				isExist++;
 			}
 			else
 				printf("/ %s ", resource[i]);
 		}
+		else
+		{
+			Score[i] = CaclSimilarity(command , resource[i]);
+		}
 	}
+
+	if(!isExist)
+	{
+		for(int i = 1 ; i < size ; i++)
+			if(Score[temp] < Score[i])
+				temp = i;
+		if(Score[temp] > 0.5)
+			printf("Maybe you mean %s " , resource[temp]);
+	}
+
+
 	printf("?\n\n");
 
  }
