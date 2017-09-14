@@ -305,7 +305,7 @@ void eval(char* command)
 		if (!builtin_command(argv))
 		{
 			printf("%s: Command not found.\n", argv[0]);
-			ShowComplete(command);		
+			ShowComplete(command);
 		}
 	}
 	else
@@ -497,6 +497,39 @@ int builtin_command(char **argv )//todo
 		}
 		return 1;
 	}
+	if(!strcmp(argv[0] , "add"))
+	{
+		char full_filename[64];
+		char tmp[64];
+		if (argv[1][0] != "/") {
+			addTwoString(tmp, current_dir, argv[1]);
+			memcpy(full_filename, tmp, 64);
+		}
+		int fd = open(full_filename, O_RDWR);
+		if (fd == -1){
+			printf("Cannot locate file: %s\n", argv[1]);
+			return 1;
+		}
+		/* get the content */
+		char content[128];
+		int n = read(fd, content, 128);
+		content[n] = 0;
+		close(fd);
+
+		printf("enter the new content to append\n");
+		char rdbuf[128];
+		int count = read(0, rdbuf, 128);
+		rdbuf[count] = 0;
+
+		char new_content[128] = "";
+		addTwoString(new_content, content, rdbuf);
+
+		fd = open(full_filename, O_RDWR);
+		write(fd, new_content, strlen(new_content));
+		close(fd);
+		printf("content appended\n");
+		return 1;
+	}
 	if(!strcmp(argv[0] , "pwd"))
 	{
 		printf("%s\n", current_dir);
@@ -642,7 +675,7 @@ void TestA()
 void TestB()
 {
 	while(1);
-	
+
 	// for(;;)
 	// {
 	// 	disp_str("B");
@@ -656,7 +689,7 @@ void TestB()
 void TestC()
 {
 	while(1);
-	
+
 	// for(;;)
 	// {
 	// 	disp_str("C");
@@ -683,14 +716,14 @@ PUBLIC void panic(const char *fmt, ...)
 	__asm__ __volatile__("ud2");
 }
 
-void clear() 
+void clear()
 {
 	int i = 0;
 	for (i = 0; i < 20; i++)
 		printf("\n");
 	// clear_screen(0,console_table[current_console].cursor);
     // console_table[current_console].crtc_start = console_table[current_console].orig;
-    // console_table[current_console].cursor = console_table[current_console].orig;    
+    // console_table[current_console].cursor = console_table[current_console].orig;
 }
 
 /*****************************************************************************
@@ -819,7 +852,7 @@ void clear()
 	 return -1;
  }
 
-<<<<<<< HEAD
+
 /*
 * print the help function
 */
@@ -840,6 +873,7 @@ void help() {
 	printf("   create  [filename]   create a new file in current directory\n");
 	printf("   open    [filename]   open the file\n");
 	printf("   write   [filename]   write the file\n");
+	printf("   add     [filename]   add new content to the file\n");
 	printf("   rm      [filename]   remove the file\n");
 	printf("   mv  [filename][desdir]   move the file to destination directory\n");
 	printf("   login   [username]   login with the username\n");
@@ -847,7 +881,7 @@ void help() {
 	printf("   game                 play games\n");
 	printf("   quit                 quit the shell\n");
 }
-=======
+
  double CaclSimilarity(const char *command ,const char *target)
  {
 	int length = strlen(command);
@@ -872,7 +906,7 @@ void help() {
 	double Score[size];
 	int isFirst = 1;
 	int isExist = 0;
-	int temp = 0; 
+	int temp = 0;
 
 	for(int i = 0 ; i < size ; i++)
 	{
@@ -906,5 +940,3 @@ void help() {
 	printf("\n\n");
 
  }
- 
->>>>>>> origin/master
