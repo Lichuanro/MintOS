@@ -324,35 +324,59 @@ int builtin_command(char **argv )//todo
 	{
 		char full_dirname[64];
 		addTwoString(full_dirname, current_dir, argv[1]);
+		// int pos = strlen(full_dirname);
+		// full_dirname[pos] = '/';
+		// full_dirname[pos + 1] = 0;
 		int fd = mkdir(full_dirname);
 		if (fd == -1) {
 			printf("Cannot create directory\n");
 			return 1;
 		}
+
 		printf("%s: directory create success\n", argv[1]);
 		return 1;
 	}
 	if(!strcmp(argv[0] , "cd"))
 	{
-		// relative path
+		/* relative path */
 		char full_path[64];
 		char tmp[64];
-		if (argv[1][0] != "/") {
+		if (!strcmp(argv[1], "..")) {
+			char upper_path[64] = "/";
+			int pos = 0;
+			for (int n = strlen(current_dir) - 1; n > 0; n--) {
+				if (current_dir[n - 1] == '/') {
+					pos = n - 1;
+					break;
+				}
+			}
+			for (int n = 0; n < pos; n++) {
+				upper_path[n] = current_dir[n];
+			}
+
+			memcpy(full_path, upper_path, 64);
+		}
+		else if (argv[1][0] != '/') {
 			addTwoString(tmp, current_dir, argv[1]);
 			memcpy(full_path, tmp, 64);
 		}
-		// absolute path
-		else if (argv[1][0] == "/") {
+		/* absolute path */
+		else if (argv[1][0] == '/') {
 			memcpy(full_path, argv[1], 64);
 		}
+
+		printf("%s\n", full_path);
 		int fd = open(full_path, O_RDWR);
 		if (fd == -1) {
 			printf("Cannot change directory\n");
 			return 1;
 		}
+		int pos = strlen(full_path);
+		if (pos > 1) {
+			full_path[pos] = '/';
+			full_path[pos + 1] = 0;
+		}
 		memcpy(current_dir, full_path, 64);
-		// strcpy(current_dir, full_path);
-		printf("%s\n", current_dir);
 		return 1;
 	}
 	if(!strcmp(argv[0] , "create"))
@@ -378,7 +402,7 @@ int builtin_command(char **argv )//todo
 	{
 		char full_path[64];
 		char tmp[64];
-		// relative path
+		/* relative path */
 		if (argv[1][0]!='/') {
 				addTwoString(tmp, current_dir, argv[1]);
 				memcpy(full_path, tmp, 64);
@@ -393,6 +417,59 @@ int builtin_command(char **argv )//todo
 		else
 		{
 				printf("Cannot delete file\n");
+		}
+		return 1;
+	}
+	if(!strcmp(argv[0] , "mv"))
+	{
+		/* get the destination */
+		char full_path[64];
+		char tmp[64];
+		char tmp_2[64];
+		  /* relative path */
+		if (argv[2][0]!='/') {
+			addTwoString(tmp, current_dir, argv[2]);
+			addTwoString(tmp_2, tmp, argv[1]);
+			memcpy(full_path, tmp_2, 64);
+		}
+		else {
+			if (argv[1][0]!='/') {
+				addTwoString(tmp_2, argv[2], argv[1]);
+				memcpy(full_path, tmp_2, 64);
+			}
+			// TODO both absolute path situation
+		}
+		/* open the file */
+		char full_filename[64];
+		char filename_tmp[64];
+			/* relative path */
+		if (argv[1][0]!='/') {
+				addTwoString(filename_tmp, current_dir, argv[1]);
+				memcpy(full_filename, filename_tmp, 64);
+		}
+		else {
+			memcpy(full_filename, argv[1], 64);
+		}
+		int fd  = open(full_filename, O_RDWR);
+		if (fd == -1) {
+			printf("Cannot locate file: %s\n", argv[1]);
+			return 1;
+		}
+		/* get the content */
+		char content[128] = "";
+		int n = read(fd, content, 128);
+		close(fd);
+		content[n] = 0;
+		/* create new file */
+		int new_fd = open(full_path, O_CREAT);
+		if (new_fd == -1) {
+			printf("Cannot move file\n");
+			return 1;
+		}
+		else {
+			write(new_fd, content, n);
+			close(new_fd);
+			unlink(argv[1]);
 		}
 		return 1;
 	}
@@ -426,8 +503,16 @@ int builtin_command(char **argv )//todo
 		userLogin(argv[1]);
 		return 1;
 	}
+	else if(!strcmp(argv[0] , "help"))
+	{
+		help();
+		return 1;
+	}
 	else if(!strcmp(argv[0], "quit"))
+	{
+		strcpy(current_user, "root");
 		exit(0);  /* terminate shell */
+	}
 	else
 		return 0;
 }
@@ -610,7 +695,17 @@ void clear() {
  */
 
  void writeFile(char * filename) {
-	 int fd = open(filename, O_RDWR);
+	 char tmp[64];
+	 char full_path[64];
+	 if (filename[0] != '/') {
+		addTwoString(tmp, current_dir, filename);
+		memcpy(full_path, tmp, 64);
+	 }
+	 int fd = open(full_path, O_RDWR);
+	 if (fd == -1) {
+		 printf("Cannot locate file: %s\n", filename);
+	 	return;
+	 }
 	 char rdbuf[128];
 	 int n = read(0, rdbuf, 128);
 	 rdbuf[n] = 0;
@@ -624,7 +719,13 @@ void clear() {
  */
 
  void openFile(char * filename) {
-	 int fd = open(filename, O_RDWR);
+	 char tmp[64];
+	 char full_path[64];
+	 if (filename[0] != '/') {
+	 	addTwoString(tmp, current_dir, filename);
+		memcpy(full_path, tmp, 64);
+	 }
+	 int fd = open(full_path, O_RDWR);
 	 if (fd == -1) {
 	 	 printf("Cannot find file: %s\n", filename);
 		 return;
@@ -690,3 +791,31 @@ void clear() {
 	 printf("login denied.\n");
 	 return -1;
  }
+
+/*
+* print the help function
+*/
+
+void help() {
+	printf("**************************************                       **   \n");
+	printf("*****************************                              *****  \n");
+	printf("                                                          ******* \n");
+	printf("                                 help                      *****  \n");
+	printf("                                                            ***   \n");
+	printf("*****************************                                 *   \n");
+	printf("**************************************                            \n");
+	printf("\n");
+	printf("   ls                   list the files and folders in current directory\n");
+	printf("   pwd                  show the current directory\n");
+	printf("   cd      [dir]        change the directory\n");
+	printf("   mkdir   [filename]   create a new folder in current directory\n");
+	printf("   create  [filename]   create a new file in current directory\n");
+	printf("   open    [filename]   open the file\n");
+	printf("   write   [filename]   write the file\n");
+	printf("   rm      [filename]   remove the file\n");
+	printf("   mv  [filename][desdir]   move the file to destination directory\n");
+	printf("   login   [username]   login with the username\n");
+	printf("   reg                  register user\n");
+	printf("   game                 play games\n");
+	printf("   quit                 quit the shell\n");
+}

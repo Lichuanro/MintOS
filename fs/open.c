@@ -147,7 +147,7 @@ PRIVATE struct inode * create_dir(char * path)
     if (strip_path(filename, path, &dir_inode) != 0)
         return 0;
 
-    printl("create dir size:%d\n",dir_inode->i_size);
+    // printl("create dir size:%d\n",dir_inode->i_size);
 
     int inode_nr = alloc_imap_bit(dir_inode->i_dev);
     int free_sect_nr = alloc_smap_bit(dir_inode->i_dev,
@@ -235,8 +235,8 @@ PUBLIC int do_ls()
 
     struct dir_entry * pde;
 
-    printl("\ninode        filename\n");
-    printl("============================\n");
+    printl("\n         filename\n");
+    printl("********************************\n");
 
     for (i = 0; i < nr_dir_blks; i++)
     {
@@ -247,7 +247,7 @@ PUBLIC int do_ls()
         for (j = 0; j < SECTOR_SIZE / DIR_ENTRY_SIZE; j++, pde++)
         {
             /*struct inode *n = find_inode(pde->inode_nr);*/
-            printl("  %2d        %s\n", pde->inode_nr , pde->name);
+            printl("  %s\n", pde->name);
             if (++m >= nr_dir_entries){
                 printl("\n");
                 break;
@@ -257,7 +257,7 @@ PUBLIC int do_ls()
             break;
     }
 
-    printl("============================\n");
+    printl("********************************\n");
 
     return 0;
 }
@@ -290,11 +290,11 @@ PUBLIC int do_mkdir()
 
 	int result = create_dir(pathname);
 	if(!result){
-		printl("Create dir %s fail!\n", pathname);
+		// printl("Create dir %s fail!\n", pathname);
 		return -1;
 	}
 
-	printl("Create dir %s success!\n", pathname);
+	// printl("Create dir %s success!\n", pathname);
 	return 0;
 }
 
