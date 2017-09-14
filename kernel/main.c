@@ -1049,7 +1049,7 @@ void OpenPM()
 			 continue;
 		 }
 		 if(proc_table[i].id >= 6 && proc_table[i].id <= 8)
-			printf("       %d               %s           %2d          %s  ============\n",
+			printf("       %d               %s           %2d          %s  \n",
 				proc_table[i].id, proc_table[i].name, proc_table[i].priority,
 				(proc_table[i].p_flags == 0 ? "running" : "paused"));
 	 }
@@ -1058,10 +1058,10 @@ void OpenPM()
 void ShowPMHelp()
  {
 	 printf("=============================================================================\n");
-	 printf("= pause [id]:       pause a process                                         =\n");
-	 printf("= resume [id]:     resume a process                                         =\n");
-	 printf("= elevate [id]:         higher a process's priority                              =\n");
-	 printf("= kill [id]:         kill a process                                         =\n");
-	 printf("= exit:              exit                                                   =\n");
+	 printf(" pause [id]:       pause a process                                         \n");
+	 printf(" resume [id]:      resume a process                                         \n");
+	 printf(" elevate [id]:     higher a process's priority                              \n");
+	 printf(" kill [id]:        kill a process                                         \n");
+	 printf(" exit:             exit                                                   \n");
 	 printf("=============================================================================\n");
  }
