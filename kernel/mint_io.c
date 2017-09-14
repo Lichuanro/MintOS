@@ -206,3 +206,25 @@ ssize_t Mint_readlineb(mint_t *rp, void *usrbuf, size_t maxlen)
 	printf("Mint_readlineb error");
     return rc;
 } 
+
+void getchar(char* result)
+{
+    read(0,result,2);
+}
+
+void gets(char * result)
+{
+    read(0,result,80);
+    int i;
+
+    for(i = 0 ; i < 80 ; i++)
+    {
+        if(result[i] == '\n')
+            result[i] = 0;
+    }
+}
+
+void puts(char* result)
+{
+    printf("%s",result);
+}

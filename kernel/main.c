@@ -22,7 +22,7 @@
 void eval(char *cmdline);
 int builtin_command(char** argv);
 int parseline(char* buf , char ** argv);
-char* strchr(char *s, char c);
+void ShowComplete(char *command);
 
 // global variables
 char current_dir[64] = "/";
@@ -113,6 +113,7 @@ PUBLIC int kernel_main()
 		p->regs.eflags	= eflags;
 
 		p->ticks = p->priority = prio;
+		p->runned_times = 0;
 
 		p->p_flags = 0;
 		p->p_msg = 0;
@@ -270,8 +271,14 @@ void shabby_shell(const char * tty_name)
 		printf("%s@mintos ", current_user);
 		printf("%s", current_dir);
 		write(1, "> ", 2);
-		int r = read(0, rdbuf, 70);
-		rdbuf[r] = 0;
+
+		int r;
+		if ((r = read(0, rdbuf, 70)) == 0)
+			continue;
+		else
+		{
+			rdbuf[r] = 0;
+		}
 
 		eval(rdbuf);
 	}
@@ -296,7 +303,10 @@ void eval(char* command)
 	if (fd == -1)
 	{
 		if (!builtin_command(argv))
+		{
 			printf("%s: Command not found.\n", argv[0]);
+			ShowComplete(command);		
+		}
 	}
 	else
 	{
@@ -304,17 +314,31 @@ void eval(char* command)
 		{
 			execv(argv[0], argv);
 		}
-		else
+		// else
+		// {
+		// 	int s;
+		// 	wait(&s);
+		// }
+		if(!bg)
 		{
 			int s;
 			wait(&s);
 		}
+		else
+			printf("%d %s",pid,command);
 	}
     return;
 }
 
 int builtin_command(char **argv )//todo
 {
+	// if(!strcmp(argv[0],"clear"))
+	// {
+	// 	clear();
+	// }
+
+	if (!strcmp(argv[0], "&"))    /* Ignore singleton & */
+		return 1;
 	if(!strcmp(argv[0] , "ls"))
 	{
 		ls(current_dir);
@@ -517,14 +541,6 @@ int builtin_command(char **argv )//todo
 		return 0;
 }
 
-char* strchr(char *s, char c)
-{
-    while(*s != '\0' && *s != c )
-    {
-        ++s;
-    }
-    return *s==c ? s : 0;
-}
 
 int parseline(char *cmdline ,char** argv)
 {
@@ -612,7 +628,12 @@ void Init()
  *======================================================================*/
 void TestA()
 {
-	for(;;);
+	while(1);
+	// for(;;)
+	// {
+	// 	disp_str("A");
+	// 	milli_delay(300);
+	// }
 }
 
 /*======================================================================*
@@ -620,15 +641,27 @@ void TestA()
  *======================================================================*/
 void TestB()
 {
-	for(;;);
+	while(1);
+	
+	// for(;;)
+	// {
+	// 	disp_str("B");
+	// 	milli_delay(900);
+	// }
 }
 
 /*======================================================================*
-                               TestB
+                               TestC
  *======================================================================*/
 void TestC()
 {
-	for(;;);
+	while(1);
+	
+	// for(;;)
+	// {
+	// 	disp_str("C");
+	// 	milli_delay(1500);
+	// }
 }
 
 /*****************************************************************************
@@ -650,25 +683,19 @@ PUBLIC void panic(const char *fmt, ...)
 	__asm__ __volatile__("ud2");
 }
 
-void clear() {
+void clear() 
+{
 	int i = 0;
 	for (i = 0; i < 20; i++)
 		printf("\n");
+	// clear_screen(0,console_table[current_console].cursor);
+    // console_table[current_console].crtc_start = console_table[current_console].orig;
+    // console_table[current_console].cursor = console_table[current_console].orig;    
 }
 
 /*****************************************************************************
  *                    below are help functions for file system
  *****************************************************************************/
-
- void addTwoString(char *to_str,char *from_str1,char *from_str2){
-    int i=0,j=0;
-    while(from_str1[i]!=0)
-        to_str[j++]=from_str1[i++];
-    i=0;
-    while(from_str2[i]!=0)
-        to_str[j++]=from_str2[i++];
-    to_str[j]=0;
- }
 
  /*
  * create a file
@@ -792,6 +819,7 @@ void clear() {
 	 return -1;
  }
 
+<<<<<<< HEAD
 /*
 * print the help function
 */
@@ -819,3 +847,64 @@ void help() {
 	printf("   game                 play games\n");
 	printf("   quit                 quit the shell\n");
 }
+=======
+ double CaclSimilarity(const char *command ,const char *target)
+ {
+	int length = strlen(command);
+	int count = 0;
+
+	for(int i = 0 ; i < length ; i++)
+	{
+		if(command[i] == target[i])
+			count++;
+	}
+
+	return (double) count / strlen(target);
+
+ }
+
+ void ShowComplete(char *command)
+ {
+	char resource[][10] = {"ls","help","mkdir","create","rm","quit","login","reg","open","write","cd","pwd",
+						"game"};
+
+	int size = 13; //记得改
+	double Score[size];
+	int isFirst = 1;
+	int isExist = 0;
+	int temp = 0; 
+
+	for(int i = 0 ; i < size ; i++)
+	{
+		if(!strcmp_length(command,resource[i],strlen(command)))//是否完全相等
+		{
+			if(isFirst)
+			{
+				printf("Maybe you mean %s " , resource[i]);
+				isFirst = 0;
+				isExist++;
+			}
+			else
+				printf("/ %s ", resource[i]);
+		}
+		else
+		{
+			Score[i] = CaclSimilarity(command , resource[i]);
+		}
+	}
+
+	if(!isExist)
+	{
+		for(int i = 1 ; i < size ; i++)
+			if(Score[temp] < Score[i])
+				temp = i;
+		if(Score[temp] > 0.5)
+			printf("Maybe you mean %s ?" , resource[temp]);
+	}
+
+
+	printf("\n\n");
+
+ }
+ 
+>>>>>>> origin/master

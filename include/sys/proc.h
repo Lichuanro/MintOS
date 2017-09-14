@@ -35,7 +35,8 @@ struct proc {
 	struct descriptor ldts[LDT_SIZE]; /* local descs for code and data */
 
         int ticks;                 /* remained ticks */
-        int priority;
+		int priority;
+		int runned_times;
 
 	/* u32 pid;                   /\* process id passed in from MM *\/ */
 	char name[16];		   /* name of the process */
