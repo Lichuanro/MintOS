@@ -23,6 +23,10 @@ void eval(char *cmdline);
 int builtin_command(char** argv);
 int parseline(char* buf , char ** argv);
 void ShowComplete(char *command);
+void ShowAllProcess();
+void OpenPM();
+void ShowPMHelp();
+void ShowProcABC();
 
 // global variables
 char current_dir[64] = "/";
@@ -114,6 +118,8 @@ PUBLIC int kernel_main()
 
 		p->ticks = p->priority = prio;
 		p->runned_times = 0;
+		p->current_priority = p->priority;
+		p->id = i;
 
 		p->p_flags = 0;
 		p->p_msg = 0;
@@ -254,7 +260,6 @@ void untar(const char * filename)
  * @param tty_name  TTY file name.
  *****************************************************************************/
 
-
 void shabby_shell(const char * tty_name)
 {
 	int fd_stdin  = open(tty_name, O_RDWR);
@@ -336,7 +341,16 @@ int builtin_command(char **argv )//todo
 	// {
 	// 	clear();
 	// }
-
+	if(!strcmp(argv[0],"pm"))
+	{
+		OpenPM();
+		return 1;
+	}
+	if(!strcmp(argv[0],"process"))
+	{
+		ShowAllProcess();
+		return 1;
+	}
 	if (!strcmp(argv[0], "&"))    /* Ignore singleton & */
 		return 1;
 	if(!strcmp(argv[0] , "ls"))
@@ -900,9 +914,9 @@ void help() {
  void ShowComplete(char *command)
  {
 	char resource[][10] = {"ls","help","mkdir","create","rm","quit","login","reg","open","write","cd","pwd",
-						"game"};
+						"game","process"};
 
-	int size = 13; //记得改
+	int size = 14; //记得改
 	double Score[size];
 	int isFirst = 1;
 	int isExist = 0;
@@ -939,4 +953,115 @@ void help() {
 
 	printf("\n\n");
 
+ }
+
+ void ShowAllProcess()
+ {
+	 int i;
+	 printf("=============================================================================\n");
+	 printf(" id | name | spriority | running?\n");
+	 //进程号，进程名，优先级，是否是系统进程，是否在运行
+	 printf("-----------------------------------------------------------------------------\n");
+	 for ( i = 0 ; i < NR_TASKS + NR_PROCS ; ++i )//逐个遍历
+	 {
+		 if ( proc_table[i].priority == 0 || !strcmp(proc_table[i].name , "INIT_9") ) 
+		 	continue;//系统资源跳过*/
+		printf(" %2d %6s      %2d        yes\n", proc_table[i].id ,proc_table[i].name, proc_table[i].priority);
+	 }
+	 printf("=============================================================================\n");
+ }
+
+void OpenPM()
+ {
+	 char rdbuf[128];
+	 int r, id, i;
+	 ShowPMHelp();
+
+	 while (1)
+	 {
+		 ShowProcABC();
+		 
+		 printf("\n>>> ");
+		 r = read(0, rdbuf, 70);
+		 rdbuf[r] = 0;
+		 id = rdbuf[r - 1] - '0';
+		 for (i = 0; i < r; ++i)
+		 {
+			 if (rdbuf[i] == ' ')
+			 {
+				 rdbuf[i] = 0;
+				 break;
+			 }
+		 }
+
+		 if (strcmp(rdbuf, "exit") == 0)
+		 {
+			 return;
+		 }
+
+		 if(id < 6 || id > 8)
+		 {
+			 printf("error id!\n");
+			 continue;
+		 }
+
+		 if (strcmp(rdbuf, "pause") == 0)
+		 {
+			 proc_table[id].p_flags = 1;
+		 }
+		 else if (strcmp(rdbuf, "resume") == 0)
+		 {
+			 proc_table[id].p_flags = 0;
+		 }
+		 else if (strcmp(rdbuf, "elevate") == 0)
+		 {
+			 proc_table[id].priority *= 2;
+		 }
+		 else if (strcmp(rdbuf, "kill") == 0)
+		 {
+			 proc_table[id].p_flags = -1;
+		 }
+		 else if (strcmp(rdbuf, "") == 0)
+		 {
+			 continue;
+		 }
+		 else if (strcmp(rdbuf, "help") == 0)
+		 {
+			 ShowPMHelp();
+		 }
+		 else
+		 {
+			 printf("\nUnknown Command");
+		 }
+	 }
+ }
+
+ void ShowProcABC()
+ {
+	 int i;
+	 printf("\n=============================================================================\n");
+	 printf("      id          |    name       |  priority    | running?\n");
+	 printf("-----------------------------------------------------------------------------\n");
+	 for (i = NR_TASKS; i < NR_TASKS + NR_PROCS; ++i)
+	 {
+		 if (proc_table[i].p_flags < 0)
+		 {
+			 continue;
+		 }
+		 if(proc_table[i].id >= 6 && proc_table[i].id <= 8)
+			printf("       %d               %s           %2d          %s  ============\n",
+				proc_table[i].id, proc_table[i].name, proc_table[i].priority,
+				(proc_table[i].p_flags == 0 ? "running" : "paused"));
+	 }
+ }
+ 
+void ShowPMHelp()
+ {
+	 printf("=============================================================================\n");
+	 printf("= pause [id]:       pause a process                                         =\n");
+	 printf("= resume [id]:     resume a process                                         =\n");
+	 printf("= elevate [id]:         higher a process's priority                              =\n");
+	 printf("= kill [id]:         kill a process                                         =\n");
+	 printf("= exit:              exit                                                   =\n");
+	 printf("=============================================================================\n");
  }
