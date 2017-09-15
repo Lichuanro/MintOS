@@ -781,6 +781,9 @@ void clear()
 		addTwoString(tmp, current_dir, filename);
 		memcpy(full_path, tmp, 64);
 	 }
+	 else {
+		 memcpy(full_path, filename, 64);
+	 }
 	 int fd = open(full_path, O_RDWR);
 	 if (fd == -1) {
 		 printf("Cannot locate file: %s\n", filename);
@@ -805,6 +808,9 @@ void clear()
 	 if (filename[0] != '/') {
 	 	addTwoString(tmp, current_dir, filename);
 		memcpy(full_path, tmp, 64);
+	 }
+	 else {
+		 memcpy(full_path, filename, 64);
 	 }
 	 int fd = open(full_path, O_RDWR);
 	 if (fd == -1) {
@@ -924,7 +930,7 @@ void help() {
 	char resource[][10] = {"ls","help","mkdir","create","rm","quit","login","reg","open","write","cd","pwd",
 						"game","process","pm", "echo"};
 
-	int size = 14; //记得改
+	int size = 16; //记得改
 	double Score[size];
 	int isFirst = 1;
 	int isExist = 0;
