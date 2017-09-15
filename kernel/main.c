@@ -270,12 +270,16 @@ void shabby_shell(const char * tty_name)
 	char rdbuf[128];
 	clear();
 
-	//boot_animation();
+	boot_animation();
 	while (1)
 	{
 		printf("%s@mintos ", current_user);
-		printf("%s", current_dir);
-		write(1, "> ", 2);
+		char dir_print[64] = "";
+		strcpy(dir_print, current_dir);
+		int pos = strlen(dir_print);
+		dir_print[pos-1] = 0;
+		printf("%s", dir_print);
+		write(1, " > ", 3);
 
 		int r;
 		if ((r = read(0, rdbuf, 70)) == 0)
@@ -903,7 +907,8 @@ void help() {
 	printf("   add     [filename]   add new content to the file\n");
 	printf("   rm      [filename]   remove the file\n");
 	printf("   mv  [filename][desdir]   move the file to destination directory\n");
-	printf("   process              	show process info\n");
+	printf("   process              show process info\n");
+	printf("   pm                   process management  --type help to see full features\n");
 	printf("   login   [username]   login with the username\n");
 	printf("   reg                  register user\n");
 	printf("   game                 play games\n");
