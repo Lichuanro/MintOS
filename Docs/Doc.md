@@ -52,7 +52,7 @@
 
 ```
 	    ls                  	list the files and folders in current directory   
-            pwd				show the current directory
+        pwd					   show the current directory
 	    cd      [dir]        	change the directory
 	    mkdir   [filename]   	create a new folder in current directory
 	    create  [filename]  	create a new file in current directory
@@ -84,10 +84,8 @@ MintOS中的shell，首先当然是有优雅的设计与流程，实现的时候
 
 eval函数负责执行命令
 
-parseline函数负责解析字符串并且判断是否需要在后台执行该程序（shell会不会等待该程序完成）
-
-```c
-    char *argv[128]; /* argv for execve() */
+```C
+ char *argv[128]; /* argv for execve() */
     int bg;              /* should the job run in bg or fg? */
     int pid;           /* process id */
 
@@ -123,6 +121,50 @@ parseline函数负责解析字符串并且判断是否需要在后台执行该�
   	 }
 ```
 
+parseline函数负责解析字符串并且判断是否需要在后台执行该程序（shell会不会等待该程序完成）
+
+```C
+
+int parseline(char *cmdline ,char** argv)
+{
+	char array[128]; /* holds local copy of command line */
+    char *buf = array;   /* ptr that traverses command line */
+    char *delim;         /* points to first space delimiter */
+    int argc;            /* number of args */
+    int bg;              /* background job? */
+
+    strcpy(buf, cmdline);
+    buf[strlen(buf)] = ' ';  /* replace trailing '\n' with space */
+    while (*buf && (*buf == ' ')) /* ignore leading spaces */
+		buf++;
+
+    /* build the argv list */
+    argc = 0;
+	while ((delim = strchr(buf, ' ')))
+	{
+		argv[argc++] = buf;
+		*delim = '\0';
+		buf = delim + 1;
+		while (*buf && (*buf == ' ')) /* ignore spaces */
+			buf++;
+    }
+	argv[argc] = 0;
+
+	for(int i = 0 ; i < argc ; i++)
+
+    if (argc == 0)  /* ignore blank line */
+		return 1;
+
+    /* should the job run in the background? */
+    if ((bg = (*argv[argc-1] == '&')) != 0)
+		argv[--argc] = 0;
+
+    return bg;
+}
+```
+
+
+
 builtin_command负责完成内建指令的执行工作，大部分是进程相关和文件系统相关的指令
 
 分工明确，模块化，十分优雅的实现方式
@@ -143,9 +185,13 @@ builtin_command负责完成内建指令的执行工作，大部分是进程相�
 
 ![](./screenshot/pm.png)
 
-### pwd命令
+#### pwd命令
 
 ![](./screenshot/pwd.png)
+
+#### clear命令
+
+清屏函数
 
 
 
@@ -176,7 +222,7 @@ PRIVATE struct inode * create_dir(char * path)
 
     return newino;
 }
-```  
+```
 修改了路径分割函数，以支持文件夹  
 
 添加了 **_ls_** 与 **_mkdir_** 函数   
@@ -386,14 +432,13 @@ int mint_read(mint_t *rp, char *usrbuf, int n)
 
 输入game指令后，会进入game程序，内含如下所示的游戏
 
-```c
-    printf("Please choose a game:\n");
-    printf("1. MineSweeper\n");
-    printf("2. 2048\n");
-    printf("3. GuessNumber\n");
-    printf("4. Maigc Square\n");
-    printf("5. GoBang\n");
-    printf("6. Eight Queen\n");
+```
+ 1. MineSweeper
+ 2. 2048
+ 3. GuessNumber
+ 4. Maigc Square
+ 5. GoBang
+ 6. Eight Queen
 ```
 
 ![](./screenshot/game.png)    
@@ -410,49 +455,106 @@ int mint_read(mint_t *rp, char *usrbuf, int n)
 **五子棋**    
 ![](./screenshot/go.png)  
 
+以及会打印出92中八皇后走法的算法小程序
+
 
 
 ### 更好的内存分配模型
 
-本书中的进程内存分配简陋至极，每个进程分配1M内存，free函数简简单单返回调用函数。
-
-这样的malloc和free有很好的吞吐率，但是内存利用率极差无比。
+本书中的进程内存分配简陋至极，每个进程分配1M内存，free函数简简单单返回调用函数。这样的malloc和free有很好的吞吐率，但是内存利用率极差无比，而且极为僵硬，不方便进行后期扩展。
 
 
-MintOS考虑到吞吐率和内存利用率的平衡，采用隐式空闲链表来组织空闲块，采用下一次适配法来寻找空闲块，通过给链表增加脚部来完成内存块的快速释放。
+MintOS考虑到吞吐率和内存利用率的平衡，采用隐式空闲链表来组织空闲块，采用下一次适配法（也就是循环首次适配法，从上次分配位置开始找到第一个满足要求的空闲块）来寻找空闲块，并合策略为立即合并；相当于是实现了一套简单的动态内存分配函数，类似于C的malloc和free。
 
-写分配器的难度不在于逻辑啊什么的，主要是操作的是裸指针，面对的是一个个的内存位，写的时候简直头皮发麻。
+写分配器的难度主要在于操作的是裸指针，面对的是一个个的内存位，写的时候简直头皮发麻。要直接面对裸露的bit位进行操作，保证对齐，在上面完成隐式空闲链表的数据结构，想想都令人激动，当然，也令人痛苦。
 
-解决方法是定义一堆宏，不停的测试直到完全正确
+解决方法是定义一堆宏，抽象一层，不停的测试直到完全正确
 
 ```c
-#define WSIZE       4       /* Word and header/footer size (bytes) */
-#define DSIZE       8       /* Double word size (bytes) */
-#define CHUNKSIZE  (1<<12)  /* Extend heap by this amount (bytes) */
+#define WSIZE       4       /* 字长与头尾部长度 */
+#define DSIZE       8       /* 双字长*/
+#define CHUNKSIZE  2048  /* 每次扩展这么多 */
 
 #define MAX(x, y) ((x) > (y)? (x) : (y))  
 
 /* Pack a size and allocated bit into a word */
 #define PACK(size, alloc)  ((size) | (alloc)) //
 
-/* Read and write a word at address p */
+/* 得到/设置p位置的值 */
 #define GET(p)       (*(unsigned int *)(p))           
 #define PUT(p, val)  (*(unsigned int *)(p) = (val))   
 
-/* Read the size and allocated fields from address p */
+/* 得到p的大小以及已分配长度 */
 #define GET_SIZE(p)  (GET(p) & ~0x7)                  
 #define GET_ALLOC(p) (GET(p) & 0x1)             
 
-/* Given block ptr bp, compute address of its header and footer */
+/* 计算链表节点的头尾长度 */
 #define HDRP(bp)       ((char *)(bp) - WSIZE)                     
 #define FTRP(bp)       ((char *)(bp) + GET_SIZE(HDRP(bp)) - DSIZE)
 
-/* Given block ptr bp, compute address of next and previous blocks */
+/* 计算上一个/下一个节点的内存位置*/
 #define NEXT_BLKP(bp)  ((char *)(bp) + GET_SIZE(((char *)(bp) - WSIZE)))
 #define PREV_BLKP(bp)  ((char *)(bp) - GET_SIZE(((char *)(bp) - DSIZE)))
 ```
 
 这些宏理解正确并且完成正确的话，其实后面的逻辑很清晰，当然了，trick当然是有不少，特别是合并块的时候。
+
+于是写出了malloc和free的代码
+
+```C
+//类似malloc函数
+void *mm_malloc(size_t size) 
+{
+    size_t asize;      /* 修改后的大小 */
+    size_t extendsize; /* 如果没有适配应该扩充的大小*/
+    char *bp;      
+
+    if (heap_listp == 0){
+        mm_init();
+    }
+   //没有则返回
+    if (size == 0)
+        return NULL;
+
+   //考虑到对其要求
+    if (size <= DSIZE)                                          
+        asize = 2*DSIZE;                                        
+    else
+        asize = DSIZE * ((size + (DSIZE) + (DSIZE-1)) / DSIZE); 
+
+    //寻找空闲块
+    if ((bp = find_fit(asize)) != NULL) { 
+        place(bp, asize);                  
+        return bp;
+    }
+
+   //未找到，扩充heap
+    extendsize = MAX(asize,CHUNKSIZE);                
+    if ((bp = extend_heap(extendsize/WSIZE)) == NULL)  
+        return NULL;                                 
+    place(bp, asize);                             
+    return bp;
+} 
+
+
+//类似free函数
+void mm_free(void *bp)
+{
+    if (bp == 0) 
+        return;
+    size_t size = GET_SIZE(HDRP(bp));
+   
+    if (heap_listp == 0){
+        mm_init();
+    }
+
+    PUT(HDRP(bp), PACK(size, 0));
+    PUT(FTRP(bp), PACK(size, 0));
+    coalesce(bp);
+}
+```
+
+
 
 不妨看一下下一次适配搜索的代码，当然了，其实都是宏的代码可阅读性并不高。
 
@@ -461,21 +563,87 @@ MintOS考虑到吞吐率和内存利用率的平衡，采用隐式空闲链表�
 ```c
    char *oldrover = rover;
 
-    /* Search from the rover to the end of list */
+    /* 从探测的位置到最后 */
     for ( ; GET_SIZE(HDRP(rover)) > 0; rover = NEXT_BLKP(rover))
         if (!GET_ALLOC(HDRP(rover)) && (asize <= GET_SIZE(HDRP(rover))))
             return rover;
 
-    /* search from start of list to old rover */
+    /* 从开始的位置到探测的位置*/
     for (rover = heap_listp; rover < oldrover; rover = NEXT_BLKP(rover))
         if (!GET_ALLOC(HDRP(rover)) && (asize <= GET_SIZE(HDRP(rover))))
             return rover;
 
-    return NULL;  /* no fit found */
+    return NULL;  /* 分配失败 */
+```
+
+### 许多辅助函数
+
+为了操作方便，新增了许多有用的字符串处理函数、IO函数（如上所述）等等
+
+例如字符串处理函数
+
+```C
+PUBLIC int strcmp_length(const char * s1, const char *s2 , int length)//比较字符串前n个是否相等
+{
+	if ((s1 == 0) || (s2 == 0)) { /* for robustness */
+		return (s1 - s2);
+	}
+
+	const char * p1 = s1;
+	const char * p2 = s2;
+	int l;
+
+	for (l = 0; *p1 && *p2 && l < length; p1++,p2++) 
+	{
+		if (*p1 != *p2) 
+		{
+			break;
+		}
+		l++;
+	}
+
+	if(l == length )
+		return 0;
+
+	return (*p1 - *p2);
+}
+
+PUBLIC char* strchr(char *s, char c)//字符串切割函数
+{
+    while(*s != '\0' && *s != c )
+    {
+        ++s;
+    }
+    return *s==c ? s : 0;
+}
+
+PUBLIC void addTwoString(char *to_str,char *from_str1,char *from_str2)//字符串拼接函数
+{
+    int i=0,j=0;
+    while(from_str1[i]!=0)
+        to_str[j++]=from_str1[i++];
+    i=0;
+    while(from_str2[i]!=0)
+        to_str[j++]=from_str2[i++];
+    to_str[j]=0;
+ }
+
+```
+
+简单的获取单个字符的getchar,读取字符串进result[0]等等
+
+```C
+void getchar(char* result)
+{
+	clearArr(result);
+    read(0,result,2);
+}
 ```
 
 
+
 ### 优美的开机动画
+
 利用 _printf_ 函数以及 _延时_ 函数实现了薄荷叶的运动   
 
 以下为结束画面      
@@ -484,10 +652,10 @@ MintOS考虑到吞吐率和内存利用率的平衡，采用隐式空闲链表�
 
 ## 参考文献
 
-|          书名          |  作者  |   出版社   |
-| :------------------: | :--: | :-----: |
-| 《Orange S:一个操作系统的实现》 |  于渊  | 电子工业出版社 |
-|      深入理解计算机系统       | Bryant,R.E  | 机械工业出版社 |
+|          书名          |     作者     |   出版社   |
+| :------------------: | :--------: | :-----: |
+| 《Orange S:一个操作系统的实现》 |     于渊     | 电子工业出版社 |
+|      深入理解计算机系统       | Bryant,R.E | 机械工业出版社 |
 
 
 ​
