@@ -38,8 +38,7 @@ void *mem_sbrk(int incr)
     char *old_brk = mem_brk;
 
     if ( (incr < 0) || ((mem_brk + incr) > mem_max_addr)) {
-	errno = ENOMEM;
-	fprintf(stderr, "ERROR: mem_sbrk failed. Ran out of memory...\n");
+	    printf("ERROR: mem_sbrk failed. Ran out of memory...\n");
 	return (void *)-1;
     }
     mem_brk += incr;
