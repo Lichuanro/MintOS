@@ -52,7 +52,7 @@
 
 ```
 	    ls                  	list the files and folders in current directory   
-      pwd					          show the current directory
+            pwd				show the current directory
 	    cd      [dir]        	change the directory
 	    mkdir   [filename]   	create a new folder in current directory
 	    create  [filename]  	create a new file in current directory
@@ -259,7 +259,7 @@ if (pos > 1) {
 memcpy(current_dir, full_path, 64);
 ```
 
-####文件的基本操作
+#### 文件的基本操作     
 调用了系统函数 **_open_ _read_ _write_ _close_** 完成了文件 **创建 删除 以及 读写 添加 移动** 等基本操作  
 （部分函数示例）  
 ```c
