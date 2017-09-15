@@ -147,8 +147,6 @@ PRIVATE struct inode * create_dir(char * path)
     if (strip_path(filename, path, &dir_inode) != 0)
         return 0;
 
-    // printl("create dir size:%d\n",dir_inode->i_size);
-
     int inode_nr = alloc_imap_bit(dir_inode->i_dev);
     int free_sect_nr = alloc_smap_bit(dir_inode->i_dev,
                       NR_DEFAULT_FILE_SECTS);

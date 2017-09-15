@@ -46,7 +46,7 @@ printf("                                                                     \n"
 printf("                                                                     \n");
 printf("                                                                     \n");
 printf("                                                                     \n");
-printf("                                                                   \n\n");
+printf("                                                                     \n");
 milli_delay(1500);
 
 
@@ -76,7 +76,7 @@ printf("                                                                     \n"
 printf("                                                                     \n");
 printf("                                                                     \n");
 printf("                                                                     \n");
-printf("                                                                   \n\n");
+printf("                                                                     \n");
 milli_delay(1500);
 
 
@@ -106,7 +106,7 @@ printf("                                                                     \n"
 printf("                                                                     \n");
 printf("                                                                     \n");
 printf("                                                                     \n");
-printf("                                                                   \n\n");
+printf("                                                                     \n");
 milli_delay(1500);
 
 clear();
@@ -135,7 +135,7 @@ printf("                                                                     \n"
 printf("                                                                     \n");
 printf("                                                                     \n");
 printf("                                                                     \n");
-printf("                                                                   \n\n");
+printf("                                                                     \n");
 milli_delay(1500);
 
 
@@ -165,7 +165,7 @@ printf("                                                                     \n"
 printf("                                                                     \n");
 printf("                                                                     \n");
 printf("                                                                     \n");
-printf("                                                                   \n\n");
+printf("                                                                     \n");
 milli_delay(1500);
 
 
@@ -195,7 +195,7 @@ printf("                                                                     \n"
 printf("                                                                     \n");
 printf("                                                                     \n");
 printf("                                                                     \n");
-printf("                                                                   \n\n");
+printf("                                                                     \n");
 milli_delay(1500);
 
 clear();
@@ -224,7 +224,7 @@ printf("                                 *                                   \n"
 printf("                                                                     \n");
 printf("                                                                     \n");
 printf("                                                                     \n");
-printf("                                                                   \n\n");
+printf("                                                                     \n");
 milli_delay(1500);
 
 clear();
@@ -253,7 +253,7 @@ printf("                        *********                                    \n"
 printf("                         ******                                      \n");
 printf("                          ***                                        \n");
 printf("                            *                                        \n");
-printf("                                                                   \n\n");
+printf("                                                                     \n");
 milli_delay(1500);
 
 clear();
@@ -282,7 +282,7 @@ printf("                       ************                                  \n"
 printf("                       ***********                                   \n");
 printf("                        *********                                    \n");
 printf("                         ******                                      \n");
-printf("                                                                   \n\n");
+printf("                                                                     \n");
 milli_delay(1500);
 
 clear();
@@ -311,7 +311,7 @@ printf("                             ****                                    \n"
 printf("                           *******                                   \n");
 printf("                        ***********                                  \n");
 printf("                       ************                                  \n");
-printf("                                                                   \n\n");
+printf("                                                                     \n");
 milli_delay(1500);
 
 clear();

@@ -31,54 +31,54 @@
  *
  * @return  On success, zero is returned. On error, -1 is returned.
  *****************************************************************************/
-// PUBLIC int do_stat()
-// {
-// 	char pathname[MAX_PATH]; /* parameter from the caller */
-// 	char filename[MAX_PATH]; /* directory has been stipped */
-//
-// 	/* get parameters from the message */
-// 	int name_len = fs_msg.NAME_LEN;	/* length of filename */
-// 	int src = fs_msg.source;	/* caller proc nr. */
-// 	assert(name_len < MAX_PATH);
-// 	phys_copy((void*)va2la(TASK_FS, pathname),    /* to   */
-// 		  (void*)va2la(src, fs_msg.PATHNAME), /* from */
-// 		  name_len);
-// 	pathname[name_len] = 0;	/* terminate the string */
-//
-// 	int inode_nr = search_file(pathname);
-// 	if (inode_nr == INVALID_INODE) {	/* file not found */
-// 		printl("{FS} FS::do_stat():: search_file() returns "
-// 		       "invalid inode: %s\n", pathname);
-// 		return -1;
-// 	}
-//
-// 	struct inode * pin = 0;
-//
-// 	struct inode * dir_inode;
-// 	if (strip_path(filename, pathname, &dir_inode) != 0) {
-// 		/* theoretically never fail here
-// 		 * (it would have failed earlier when
-// 		 *  search_file() was called)
-// 		 */
-// 		assert(0);
-// 	}
-// 	pin = get_inode(dir_inode->i_dev, inode_nr);
-//
-// 	struct stat s;		/* the thing requested */
-// 	s.st_dev = pin->i_dev;
-// 	s.st_ino = pin->i_num;
-// 	s.st_mode= pin->i_mode;
-// 	s.st_rdev= is_special(pin->i_mode) ? pin->i_start_sect : NO_DEV;
-// 	s.st_size= pin->i_size;
-//
-// 	put_inode(pin);
-//
-// 	phys_copy((void*)va2la(src, fs_msg.BUF), /* to   */
-// 		  (void*)va2la(TASK_FS, &s),	 /* from */
-// 		  sizeof(struct stat));
-//
-// 	return 0;
-// }
+PUBLIC int do_stat()
+{
+	char pathname[MAX_PATH]; /* parameter from the caller */
+	char filename[MAX_PATH]; /* directory has been stipped */
+
+	/* get parameters from the message */
+	int name_len = fs_msg.NAME_LEN;	/* length of filename */
+	int src = fs_msg.source;	/* caller proc nr. */
+	assert(name_len < MAX_PATH);
+	phys_copy((void*)va2la(TASK_FS, pathname),    /* to   */
+		  (void*)va2la(src, fs_msg.PATHNAME), /* from */
+		  name_len);
+	pathname[name_len] = 0;	/* terminate the string */
+
+	int inode_nr = search_file(pathname);
+	if (inode_nr == INVALID_INODE) {	/* file not found */
+		printl("{FS} FS::do_stat():: search_file() returns "
+		       "invalid inode: %s\n", pathname);
+		return -1;
+	}
+
+	struct inode * pin = 0;
+
+	struct inode * dir_inode;
+	if (strip_path(filename, pathname, &dir_inode) != 0) {
+		/* theoretically never fail here
+		 * (it would have failed earlier when
+		 *  search_file() was called)
+		 */
+		assert(0);
+	}
+	pin = get_inode(dir_inode->i_dev, inode_nr);
+
+	struct stat s;		/* the thing requested */
+	s.st_dev = pin->i_dev;
+	s.st_ino = pin->i_num;
+	s.st_mode= pin->i_mode;
+	s.st_rdev= is_special(pin->i_mode) ? pin->i_start_sect : NO_DEV;
+	s.st_size= pin->i_size;
+
+	put_inode(pin);
+
+	phys_copy((void*)va2la(src, fs_msg.BUF), /* to   */
+		  (void*)va2la(TASK_FS, &s),	 /* from */
+		  sizeof(struct stat));
+
+	return 0;
+}
 
 PUBLIC struct dir_entry * find_entry(char *path)
 {
@@ -237,7 +237,6 @@ PUBLIC int search_file(char * path)
 PUBLIC int strip_path(char * filename, const char * pathname,
               struct inode** ppinode)
 {
-    //printl("strip_path,pathname:%s\n",pathname);
     const char * s = pathname;
     char * t = filename;
 
@@ -247,28 +246,13 @@ PUBLIC int strip_path(char * filename, const char * pathname,
     if (*s == '/')
         s++;
 
-   /* while (*s) {
-        if (*s == '/')
-            return -1;
-        *t++ = *s++;
-        if (t - filename >= MAX_FILENAME_LEN)
-            break;
-    }
-    *t = 0;
-
-    *ppinode = root_inode;*/
-
-      struct inode *pinode_now = root_inode, *ptemp;
+    struct inode *pinode_now = root_inode, *ptemp;
     struct dir_entry * pde;
     int dir_blk0_nr, nr_dir_blks, nr_dir_entries, m;
     int i, j;
 
-    //printl("root size:%d\n", pinode_now->i_size);
-
     while(*s){
         if(*s == '/'){
-            /*if(*(++s)==0)
-                break;*/
             int flag = 0;
             dir_blk0_nr = pinode_now->i_start_sect;
             nr_dir_blks = (pinode_now->i_size + SECTOR_SIZE - 1) / SECTOR_SIZE;
@@ -278,28 +262,23 @@ PUBLIC int strip_path(char * filename, const char * pathname,
             m = 0;
             pde = 0;
             *t = 0;
-            //printl("filename:%s\n",filename);
+
             for (i = 0; i < nr_dir_blks && flag==0; i++) {
                 RD_SECT(pinode_now->i_dev, dir_blk0_nr + i);
                 pde = (struct dir_entry *)fsbuf;
                 for (j = 0; j < SECTOR_SIZE / DIR_ENTRY_SIZE; j++,pde++) {
-                    //printl("pde->name:%s\n", pde->name);
                     if (strcmp(filename, pde->name) == 0){
                         ptemp = get_inode(pinode_now->i_dev, pde->inode_nr);
-                        //printl("out\n");
                         if(ptemp->i_mode == I_DIRECTORY){
-                           // printl("in\n");
                             pinode_now = ptemp;
                             flag = 1;
                             break;
                         }
-                        //return pde->inode_nr;
                     }
                     if (++m > nr_dir_entries)
                         return -1;
                 }
                 if (m > nr_dir_entries || flag==0) {
-                   // printl("flag==0\n");
                     return -1;
                 }
             }
@@ -319,6 +298,5 @@ PUBLIC int strip_path(char * filename, const char * pathname,
 
     *t = 0;
     *ppinode = pinode_now;
-  //  printl("size:%d\n",pinode_now->i_size);
     return 0;
 }

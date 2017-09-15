@@ -323,11 +323,7 @@ void eval(char* command)
 		{
 			execv(argv[0], argv);
 		}
-		// else
-		// {
-		// 	int s;
-		// 	wait(&s);
-		// }
+
 		if(!bg)
 		{
 			int s;
@@ -759,9 +755,6 @@ void clear()
  */
 
  void createFile(char * filename) {
-	//  char * final_name;
-	//  addTwoString(final_name, "/", filename);
-  //  printf("%s\n", final_name);
 	 printf("%s\n", filename);
 	 int fd = open(filename, O_CREAT | O_RDWR);
 	 printf("fd: %d\n", fd);
@@ -1021,7 +1014,7 @@ void OpenPM()
 		 if (strcmp(rdbuf, "help") == 0)
 		 {
 			 ShowPMHelp();
-			 return;
+			 continue;
 		 }
 
 		 if(id < 6 || id > 8)
