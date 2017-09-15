@@ -22,7 +22,8 @@ static char *mem_max_addr; /* Max legal heap addr plus 1*/
  */
 void mem_init(void)
 {
-    mem_heap = (char *)Malloc(MAX_HEAP);
+    //mem_heap = (char *)Malloc(MAX_HEAP);
+    mem_heap = (char *)PROCS_BASE;
     mem_brk = (char *)mem_heap;               
     mem_max_addr = (char *)(mem_heap + MAX_HEAP); 
 }
