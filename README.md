@@ -1,24 +1,12 @@
-# 操作系统课程项目——介于AB之间的实现
+# MintOS   
+    
+this is the OS course project   
+    
+<img src='https://raw.githubusercontent.com/Lichuanro/MintOS/master/Docs/screenshot/start.png' width='450px'>
+    
+## Environment   
+- Ubuntu 16.04 32 bits / 64 bits    
+- Bochs 2.6
 
-### 1552629谢天 1552663李川容
-
-###开机动画 优化？ 
-
-
-
-
-
-### 坑
-
-代码太老，未维护，导致bochs版本问题
-
-平台相关
-
-函数功能和linux不对应
-
-
-
-
-
-
-
+## Doc   
+[Here's the Doc of the project (Chinese)](https://github.com/Lichuanro/MintOS/blob/master/Docs/Doc.md)
