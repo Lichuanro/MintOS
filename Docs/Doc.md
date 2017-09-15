@@ -52,7 +52,7 @@
 
 ```
 	    ls                  	list the files and folders in current directory   
-        pwd					   show the current directory
+            pwd				show the current directory
 	    cd      [dir]        	change the directory
 	    mkdir   [filename]   	create a new folder in current directory
 	    create  [filename]  	create a new file in current directory
