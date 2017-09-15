@@ -1018,6 +1018,12 @@ void OpenPM()
 			 return;
 		 }
 
+		 if (strcmp(rdbuf, "help") == 0)
+		 {
+			 ShowPMHelp();
+			 return;
+		 }
+
 		 if(id < 6 || id > 8)
 		 {
 			 printf("error id!\n");
@@ -1043,11 +1049,6 @@ void OpenPM()
 		 else if (strcmp(rdbuf, "") == 0)
 		 {
 			 continue;
-		 }
-		 else if (strcmp(rdbuf, "help") == 0)
-		 {
-			 ShowPMHelp();
-			 return;
 		 }
 		 else
 		 {
