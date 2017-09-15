@@ -337,10 +337,11 @@ void eval(char* command)
 
 int builtin_command(char **argv )//todo
 {
-	// if(!strcmp(argv[0],"clear"))
-	// {
-	// 	clear();
-	// }
+	if(!strcmp(argv[0],"clear"))
+	{
+		clear();
+		return 1;
+	}
 	if(!strcmp(argv[0],"pm"))
 	{
 		OpenPM();
@@ -733,7 +734,7 @@ PUBLIC void panic(const char *fmt, ...)
 void clear()
 {
 	int i = 0;
-	for (i = 0; i < 20; i++)
+	for (i = 0; i < 25; i++)
 		printf("\n");
 	// clear_screen(0,console_table[current_console].cursor);
     // console_table[current_console].crtc_start = console_table[current_console].orig;
@@ -780,7 +781,8 @@ void clear()
 		 printf("Cannot locate file: %s\n", filename);
 	 	return;
 	 }
-	 char rdbuf[128];
+	 printf("Enter the content: \n");
+	 char rdbuf[128] = "";
 	 int n = read(0, rdbuf, 128);
 	 rdbuf[n] = 0;
 	 write(fd, rdbuf, n);
@@ -804,8 +806,8 @@ void clear()
 	 	 printf("Cannot find file: %s\n", filename);
 		 return;
 	 }
-	 printf("%dn", fd);
-	 char content[128];
+
+	 char content[128] = "";
 	 int n = read(fd, content, 128);
 	 content[n] = 0;
 	 printf("%s\n", content);
@@ -966,7 +968,7 @@ void help() {
 	 printf("-----------------------------------------------------------------------------\n");
 	 for ( i = 0 ; i < NR_TASKS + NR_PROCS ; ++i )//逐个遍历
 	 {
-		 if ( proc_table[i].priority == 0 || !strcmp(proc_table[i].name , "INIT_9") ) 
+		 if ( proc_table[i].priority == 0 || !strcmp(proc_table[i].name , "INIT_9") )
 		 	continue;//系统资源跳过*/
 		printf(" %2d %6s      %2d        yes\n", proc_table[i].id ,proc_table[i].name, proc_table[i].priority);
 	 }
@@ -982,7 +984,7 @@ void OpenPM()
 	 while (1)
 	 {
 		 ShowProcABC();
-		 
+
 		 printf("\n>>> ");
 		 r = read(0, rdbuf, 70);
 		 rdbuf[r] = 0;
@@ -1058,7 +1060,7 @@ void OpenPM()
 				(proc_table[i].p_flags == 0 ? "running" : "paused"));
 	 }
  }
- 
+
 void ShowPMHelp()
  {
 	 printf("=============================================================================\n");
