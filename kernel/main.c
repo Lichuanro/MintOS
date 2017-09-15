@@ -580,6 +580,11 @@ int builtin_command(char **argv )//todo
 		help();
 		return 1;
 	}
+	else if(!strcmp(argv[0] , "echo"))
+	{
+		printf("%s\n", argv[1]);
+		return 1;
+	}
 	else if(!strcmp(argv[0], "quit"))
 	{
 		strcpy(current_user, "root");
@@ -882,22 +887,21 @@ void help() {
 	printf("*****************************                                 *   \n");
 	printf("**************************************                            \n");
 	printf("\n");
-	printf("   ls                  		list the files and folders in current directory\n");
-	printf("   pwd                  	show the current directory\n");
-	printf("   cd      [dir]        	change the directory\n");
-	printf("   mkdir   [filename]   	create a new folder in current directory\n");
-	printf("   create  [filename]  	 	create a new file in current directory\n");
-	printf("   open    [filename]   	open the file\n");
-	printf("   write   [filename]   	write the file\n");
-	printf("   add     [filename]   	add new content to the file\n");
-	printf("   rm      [filename]   	remove the file\n");
+	printf("   ls                   list the files and folders in current directory\n");
+	printf("   pwd                  show the current directory\n");
+	printf("   cd      [dir]        change the directory\n");
+	printf("   mkdir   [filename]   create a new folder in current directory\n");
+	printf("   create  [filename]   create a new file in current directory\n");
+	printf("   open    [filename]   open the file\n");
+	printf("   write   [filename]   write the file\n");
+	printf("   add     [filename]   add new content to the file\n");
+	printf("   rm      [filename]   remove the file\n");
 	printf("   mv  [filename][desdir]   move the file to destination directory\n");
-	printf("   login   [username]   	login with the username\n");
-	printf("   reg                  	register user\n");
-	printf("   game                 	play games\n");
 	printf("   process              	show process info\n");
-	printf("   pm                   	manage process\n");	
-	printf("   quit                 	quit the shell\n");
+	printf("   login   [username]   login with the username\n");
+	printf("   reg                  register user\n");
+	printf("   game                 play games\n");
+	printf("   quit                 quit the shell\n");
 }
 
  double CaclSimilarity(const char *command ,const char *target)
@@ -918,9 +922,9 @@ void help() {
  void ShowComplete(char *command)
  {
 	char resource[][10] = {"ls","help","mkdir","create","rm","quit","login","reg","open","write","cd","pwd",
-						"game","process","pm"};
+						"game","process","pm", "echo"};
 
-	int size = 15; //记得改
+	int size = 14; //记得改
 	double Score[size];
 	int isFirst = 1;
 	int isExist = 0;
@@ -955,7 +959,7 @@ void help() {
 	}
 
 
-	printf("\n\n");
+	printf("\n");
 
  }
 
@@ -1003,12 +1007,6 @@ void OpenPM()
 			 return;
 		 }
 
-		 if (strcmp(rdbuf, "help") == 0)
-		 {
-			 ShowPMHelp();
-			 return ;
-		 }
-
 		 if(id < 6 || id > 8)
 		 {
 			 printf("error id!\n");
@@ -1034,6 +1032,11 @@ void OpenPM()
 		 else if (strcmp(rdbuf, "") == 0)
 		 {
 			 continue;
+		 }
+		 else if (strcmp(rdbuf, "help") == 0)
+		 {
+			 ShowPMHelp();
+			 return;
 		 }
 		 else
 		 {
