@@ -26,12 +26,12 @@ int chessboard[N + 1][N + 1] = { 0 };
 int whoseTurn = 0;
 
 int main()
-{  
+{
     printf("Please choose a game:\n");
     printf("1. MineSweeper\n");
     printf("2. 2048\n");
     printf("3. GuessNumber\n");
-    printf("4. Maigc Square\n");
+    printf("4. Magic Square\n");
     printf("5. GoBang\n");
     printf("6. Eight Queen\n");
 
@@ -59,12 +59,12 @@ int main()
             break;
         case 6:
             EightQueen();
-            break;  
+            break;
         default:
             printf("Invaild number!\n");
             return;
     }
-} 
+}
 
 
 void ClearArr(char *arr, int length)
@@ -393,7 +393,7 @@ void GuessNumber()
         printf("You are really awesome!!!");
     else
         printf("You Win, aha , just so so");
-    
+
     return;
 }
 
@@ -414,13 +414,13 @@ void MagicSquare()
 int array(int n)
 {
     int i, j, no, num, max;
-    
+
     if(n%2 == 0)  /*n是偶数，则加1使其变为奇数*/
     {
         n=n+1;
     }
     max=n*n;
-    
+
     mtrx[n/2]=1;  /* 将1存入数组*/
     i=0;  /*自然数1所在行*/
     j=n/2;  /*自然数1所在列*/
@@ -516,7 +516,7 @@ void playChess(void)
 		int r = read(0, x, 4);
 		int i = x[0]-49+1;
         int j = x[2] - 49 + 1;
-        
+
         if(x[0] == 'q')
             return;
 
@@ -531,7 +531,7 @@ void playChess(void)
 		int r = read(0, x, 4);
 		int i = x[0]-49+1;
         int j = x[2] - 49 + 1;
-        
+
         if(x[0] == 'q')
             return;
 
@@ -539,7 +539,7 @@ void playChess(void)
 	}
 
 	printChessboard();
-	
+
 	if (judge(i, j))
 	{
 		if (1 == whoseTurn % 2)
@@ -605,12 +605,12 @@ int MineSweeper()
         }
     }
 
-    int p[8][2]={{-1,-1} ,{-1,0},{-1,1},{0,-1},{0,1},{1,-1},{1,0},{1,1}};  
-    int i=0,j=0;   
-    int h=0,l=0; 
-    int h1=0,l1=0;  
+    int p[8][2]={{-1,-1} ,{-1,0},{-1,1},{0,-1},{0,1},{1,-1},{1,0},{1,1}};
+    int i=0,j=0;
+    int h=0,l=0;
+    int h1=0,l1=0;
     int n=0;
-    int win=0;  
+    int win=0;
     char x[2]; char y[2];
 
     printf("**************************************\n");
@@ -619,22 +619,22 @@ int MineSweeper()
     printf("*  Enter 1-8 twice to locate the mine*\n");
     printf("*  Enter q to quit                   *\n");
     printf("**************************************\n\n");
-    while(1)  
-    {  
-        for(i=0;i<8;i++)  
-        {  
-            for(j=0;j<8;j++)  
-            {  
-                printf("%c ",ui[i][j]);  
-            }  
-            printf("\n");  
-        }  
+    while(1)
+    {
+        for(i=0;i<8;i++)
+        {
+            for(j=0;j<8;j++)
+            {
+                printf("%c ",ui[i][j]);
+            }
+            printf("\n");
+        }
 
-        printf("please enter the row number:");  
+        printf("please enter the row number:");
         ClearArr(x, 2);
         int r = read(0, x, 2);
         h = x[0]-49+1;
-        if(x[0] == 'q') 
+        if(x[0] == 'q')
             return;
         while(!(h >=1 && h <= 8))
         {
@@ -646,7 +646,7 @@ int MineSweeper()
         ClearArr(x, 2);
         int r1 = read(0, y, 2);
         l = y[0]-49+1;
-        if(y[0] == 'q') 
+        if(y[0] == 'q')
             return ;
 
         while(!(l >=1 && l <= 8))
@@ -654,72 +654,72 @@ int MineSweeper()
             printf("Invaild number! Please input again:\n");
             r1 = read(0, y, 2);l = y[0]-49+1;
         }
-        
-        if(map[h-1][l-1]==1)  
-        {  
-            printf("You Die!\n");  
-            break;  
-        }  
-        h=h-1;  
-        l=l-1;   
 
-        while(i<8)  
-        {  
-            n=0;  
-            h1=h;  
-            l1=l;   
-            h1= h1+p[i][0];  
-            l1=l1+p[i][1];  
-            if(h1>=0&&h1<8&&l1>=0&&l1<8)  
-                {  
-                    if(map[h1][l1]==1)  
-                        {  
-                            n++;  
-                        }    
-                }  
+        if(map[h-1][l-1]==1)
+        {
+            printf("You Die!\n");
+            break;
+        }
+        h=h-1;
+        l=l-1;
 
-            i++;  
-        }  
+        while(i<8)
+        {
+            n=0;
+            h1=h;
+            l1=l;
+            h1= h1+p[i][0];
+            l1=l1+p[i][1];
+            if(h1>=0&&h1<8&&l1>=0&&l1<8)
+                {
+                    if(map[h1][l1]==1)
+                        {
+                            n++;
+                        }
+                }
 
-        switch(n)  
-        {  
-            case 0:  
-                ui[h][l]='0';  
-                    break;  
-            case 1:  
-                ui[h][l]='1';  
-                    break;  
-            case 2:  
-                ui[h][l]='2';  
-                    break;  
-            case 3:  
-                ui[h][l]='3';  
-                    break;  
-            case 4:  
-                ui[h][l]='4';  
-                    break;  
-            case 5:  
-                ui[h][l]='5';  
-                    break;  
-            case 6:  
-                ui[h][l]='6';  
-                    break;  
-            case 7:  
-                ui[h][l]='7';  
-                    break;  
-            case 8:  
-                ui[h][l]='8';  
-                    break;  
-        }  
-        win++;  
+            i++;
+        }
 
-        if(win==54)  
-        {  
-            printf("You win!\n");  
-                break;  
-        }   
-    }  
-    return 0;  
+        switch(n)
+        {
+            case 0:
+                ui[h][l]='0';
+                    break;
+            case 1:
+                ui[h][l]='1';
+                    break;
+            case 2:
+                ui[h][l]='2';
+                    break;
+            case 3:
+                ui[h][l]='3';
+                    break;
+            case 4:
+                ui[h][l]='4';
+                    break;
+            case 5:
+                ui[h][l]='5';
+                    break;
+            case 6:
+                ui[h][l]='6';
+                    break;
+            case 7:
+                ui[h][l]='7';
+                    break;
+            case 8:
+                ui[h][l]='8';
+                    break;
+        }
+        win++;
+
+        if(win==54)
+        {
+            printf("You win!\n");
+                break;
+        }
+    }
+    return 0;
 }
 
 #define N 8
@@ -777,7 +777,7 @@ void backtrack(int i)
 				//设定为占用
 				column[j] = rup[i+j] = lup[i-j+N] = 0;
 				backtrack(i+1);
-				column[j] = rup[i+j] = lup[i-j+N] = 1; //在左下角递归完后进行下一个位置的递归运算                                                                                       
+				column[j] = rup[i+j] = lup[i-j+N] = 1; //在左下角递归完后进行下一个位置的递归运算
 			}
 		}
 }

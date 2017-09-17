@@ -298,13 +298,13 @@ void shabby_shell(const char * tty_name)
 void eval(char* command)
 {
 	char *argv[128]; /* argv for execve() */
-    int bg;              /* should the job run in bg or fg? */
-    int pid;           /* process id */
+  int bg;              /* should the job run in bg or fg? */
+  int pid;           /* process id */
 
     /* parse command line */
 	bg = parseline(command, argv);
 
-    if (argv[0] == 0)
+  if (argv[0] == 0)
 		return;   /* ignore empty lines */
 
 
@@ -918,9 +918,7 @@ void help() {
 		if(command[i] == target[i])
 			count++;
 	}
-
 	return (double) count / strlen(target);
-
  }
 
  void ShowComplete(char *command)
