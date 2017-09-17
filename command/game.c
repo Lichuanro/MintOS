@@ -1,11 +1,11 @@
 #include "stdio.h"
 
-#define N	15
+#define N	9
 
-void initGame(void);
-void printChessboard(void);
-void playChess(void);
-int judge(int, int);
+void initGame();
+void printChessboard();
+int playChess(int *);
+int judge(int, int , int *);
 
 void ClearArr(char *arr, int length);
 int mat_init(int *mat);
@@ -23,7 +23,6 @@ int array(int n);
 unsigned int _seed2 = 0xDEADBEEF;
 int mtrx[100];
 int chessboard[N + 1][N + 1] = { 0 };
-int whoseTurn = 0;
 
 int main()
 {
@@ -463,12 +462,15 @@ int array(int n)
 
 int GoBang(void)
 {
-	initGame();
+    initGame();
+
+    int flag = 0;
 
 	while (1)
 	{
-		whoseTurn++;
-		playChess();
+		flag++;
+        if(playChess(&flag) == 1)
+            return 0;
 	}
 
 	return 0;
@@ -476,11 +478,10 @@ int GoBang(void)
 
 void initGame(void)
 {
-	char c;
 	printChessboard();
 }
 
-void printChessboard(void)
+void printChessboard()
 {
 	int i, j;
 
@@ -497,62 +498,66 @@ void printChessboard(void)
 			else if (2 == chessboard[i][j])
 				printf("  #");
 			else
-				printf("   ");
+                printf("   ");
 		}
 		printf("\n");
-	}
+    }
 }
 
-void playChess(void)
+int playChess(int *flag)
 {
 	int i, j, winner;
 
-	if (1 == whoseTurn % 2)
+	if (1 == (*flag) % 2)
 	{
-		printf("Player 1's turn:\n");
+		printf("Player 1's turn: \n");
 
-		char x[3];
-		ClearArr(x, 3);
-		int r = read(0, x, 4);
+		char x[10];
+		ClearArr(x, 10);
+		int r = read(0, x, 10);
 		int i = x[0]-49+1;
         int j = x[2] - 49 + 1;
 
         if(x[0] == 'q')
-            return;
+            return 1;
 
 		chessboard[i][j] = 1;
 	}
 	else
 	{
-		printf("Player 2's turn: \n");
+		printf("Player 2's turn:\n");
 
-		char x[3];
-		ClearArr(x, 3);
-		int r = read(0, x, 4);
+		char x[10];
+		ClearArr(x, 10);
+		int r = read(0, x, 10);
 		int i = x[0]-49+1;
         int j = x[2] - 49 + 1;
 
         if(x[0] == 'q')
-            return;
+            return 1;
 
 		chessboard[i][j] = 2;
 	}
 
-	printChessboard();
+    printChessboard();
 
-	if (judge(i, j))
+    printf("\n2\n");
+
+	if (judge(i, j , flag))
 	{
-		if (1 == whoseTurn % 2)
-			printf("Player wins！\n");
+		if (1 == (*flag) % 2)
+			printf("Player1 wins！\n");
 		else
-			printf("Player wins！\n");
-	}
+			printf("Player2 wins！\n");
+    }
+
+    return 0;
 }
 
-int judge(int x, int y)
+int judge(int x, int y , int * flag)
 {
 	int i, j;
-	int t = 2 - whoseTurn % 2;
+	int t = 2 - (*flag) % 2;
 
 	for (i = x - 4, j = y; i <= x; i++)
 	{
@@ -574,7 +579,6 @@ int judge(int x, int y)
 		if (i >= 1 && i <= N - 4 && j >= 1 && j <= N - 4 && t == chessboard[i][j] && t == chessboard[i - 1][j + 1] && t == chessboard[i - 2][j + 2] && t == chessboard[i - 3][j + 3] && t == chessboard[i - 4][j + 4])
 			return 1;
 	}
-
 	return 0;
 }
 
