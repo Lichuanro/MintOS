@@ -465,10 +465,12 @@ int builtin_command(char **argv )//todo
 		char full_path[64];
 		char tmp[64];
 		char tmp_2[64];
+		char tmp_3[64];
 		  /* relative path */
 		if (argv[2][0]!='/') {
 			addTwoString(tmp, current_dir, argv[2]);
-			addTwoString(tmp_2, tmp, argv[1]);
+			addTwoString(tmp_3, tmp, "/");
+			addTwoString(tmp_2, tmp_3, argv[1]);
 			memcpy(full_path, tmp_2, 64);
 		}
 		else {
@@ -502,14 +504,19 @@ int builtin_command(char **argv )//todo
 		/* create new file */
 		int new_fd = open(full_path, O_CREAT);
 		if (new_fd == -1) {
-			printf("Cannot move file\n");
-			return 1;
+
 		}
 		else {
-			write(new_fd, content, n);
+			char temp[128];
+			temp[0] = 0;
+			write(new_fd, temp, 1);
 			close(new_fd);
-			unlink(argv[1]);
 		}
+		int fd_to_write = open(full_path, O_RDWR);
+		write(fd_to_write, content, n + 1);
+		close(fd_to_write);
+		unlink(full_filename);
+
 		return 1;
 	}
 	if(!strcmp(argv[0] , "add"))
@@ -790,7 +797,7 @@ void clear()
 	 char rdbuf[128] = "";
 	 int n = read(0, rdbuf, 128);
 	 rdbuf[n] = 0;
-	 write(fd, rdbuf, n);
+	 write(fd, rdbuf, n+1);
 	 printf("write finished!\n");
 	 close(fd);
  }
