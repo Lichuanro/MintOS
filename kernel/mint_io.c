@@ -1,6 +1,5 @@
 
 /* Persistent state for the robust I/O (Mint) package */
-/* $begin mint_t */
 #define MINT_BUFSIZE 8192
 typedef struct {
     int mint_fd;                /* Descriptor for this internal buf */
@@ -8,7 +7,6 @@ typedef struct {
     char *mint_bufptr;          /* Next unread byte in internal buf */
     char mint_buf[MINT_BUFSIZE]; /* Internal buffer */
 } mint_t;
-/* $end mint_t */
 
 
 /****************************************
@@ -18,7 +16,6 @@ typedef struct {
 /*
  * mint_readn - Robustly read n bytes (unbuffered)
  */
-/* $begin mint_readn */
 ssize_t mint_readn(int fd, void *usrbuf, size_t n)
 {
     size_t nleft = n;
@@ -39,12 +36,10 @@ ssize_t mint_readn(int fd, void *usrbuf, size_t n)
     }
     return (n - nleft);         /* Return >= 0 */
 }
-/* $end mint_readn */
 
 /*
  * mint_writen - Robustly write n bytes (unbuffered)
  */
-/* $begin mint_writen */
 ssize_t mint_writen(int fd, void *usrbuf, size_t n)
 {
     size_t nleft = n;
@@ -63,7 +58,6 @@ ssize_t mint_writen(int fd, void *usrbuf, size_t n)
     }
     return n;
 }
-/* $end mint_writen */
 
 
 /*
@@ -74,7 +68,6 @@ ssize_t mint_writen(int fd, void *usrbuf, size_t n)
  *    entry, mint_read() refills the internal buffer via a call to
  *    read() if the internal buffer is empty.
  */
-/* $begin mint_read */
 static ssize_t mint_read(mint_t *rp, char *usrbuf, size_t n)
 {
     int cnt;
@@ -101,24 +94,20 @@ static ssize_t mint_read(mint_t *rp, char *usrbuf, size_t n)
     rp->mint_cnt -= cnt;
     return cnt;
 }
-/* $end mint_read */
 
 /*
  * mint_readinitb - Associate a descriptor with a read buffer and reset buffer
  */
-/* $begin mint_readinitb */
 void mint_readinitb(mint_t *rp, int fd)
 {
     rp->mint_fd = fd;
     rp->mint_cnt = 0;
     rp->mint_bufptr = rp->mint_buf;
 }
-/* $end mint_readinitb */
 
 /*
  * mint_readnb - Robustly read n bytes (buffered)
  */
-/* $begin mint_readnb */
 ssize_t mint_readnb(mint_t *rp, void *usrbuf, size_t n)
 {
     size_t nleft = n;
@@ -135,12 +124,10 @@ ssize_t mint_readnb(mint_t *rp, void *usrbuf, size_t n)
     }
     return (n - nleft);         /* return >= 0 */
 }
-/* $end mint_readnb */
 
 /*
  * mint_readlineb - Robustly read a text line (buffered)
  */
-/* $begin mint_readlineb */
 ssize_t mint_readlineb(mint_t *rp, void *usrbuf, size_t maxlen)
 {
     int n, rc;
@@ -181,7 +168,7 @@ ssize_t Mint_readn(int fd, void *ptr, size_t nbytes)
 void Mint_writen(int fd, void *usrbuf, size_t n)
 {
     if (mint_writen(fd, usrbuf, n) != n)
-	printf("Mint_writen error");
+	     printf("Mint_writen error");
 }
 
 void Mint_readinitb(mint_t *rp, int fd)
@@ -194,7 +181,7 @@ ssize_t Mint_readnb(mint_t *rp, void *usrbuf, size_t n)
     ssize_t rc;
 
     if ((rc = mint_readnb(rp, usrbuf, n)) < 0)
-	printf("Mint_readnb error");
+	     printf("Mint_readnb error");
     return rc;
 }
 
@@ -203,7 +190,7 @@ ssize_t Mint_readlineb(mint_t *rp, void *usrbuf, size_t maxlen)
     ssize_t rc;
 
     if ((rc = mint_readlineb(rp, usrbuf, maxlen)) < 0)
-	printf("Mint_readlineb error");
+	     printf("Mint_readlineb error");
     return rc;
 }
 
